@@ -17,6 +17,8 @@ import LockPersonIcon from "@mui/icons-material/LockPerson";
 import { SidebarContext } from "./SidebarContext";
 import FeedIcon from "@mui/icons-material/Feed";
 import ArticleIcon from "@mui/icons-material/Article";
+import { useNavigate } from "react-router-dom";
+import { toast,ToastContainer } from "react-toastify";
 
 const Item = ({ title, to, icon, selected, setSelected }) => {
   const theme = useTheme();
@@ -37,6 +39,7 @@ const Item = ({ title, to, icon, selected, setSelected }) => {
 };
 
 const Sidebar = () => {
+  const navigate=useNavigate();
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   // const [isCollapsed, setIsCollapsed] = useState(false);
@@ -48,6 +51,11 @@ const Sidebar = () => {
     setIsCollapsed(!isCollapsed);
   };
 
+  const handleLogOut=async()=>{
+    sessionStorage.removeItem("userId");
+    toast.success("successfully Logout")
+    navigate("/");
+  }
   return (
     <Box
       // sx={{
@@ -232,13 +240,16 @@ const Sidebar = () => {
               selected={selected}
               setSelected={setSelected}
             />
+            <div   onClick={handleLogOut}>
             <Item
               title="Sign Out"
               to="/"
               icon={<LogoutIcon />}
               selected={selected}
               setSelected={setSelected}
+            
             />
+            </div>
           </Box>
         </Menu>
       </ProSidebar>
