@@ -23,9 +23,9 @@ const Form = () => {
   // const [type, setType] = React.useState("");
   const { isCollapsed } = useContext(SidebarContext);
 
-  const handleChange = (event) => {
-    setType(event.target.value);
-  };
+  // const handleChange = (event) => {
+  //   setType(event.target.value);
+  // };
   const {
     register,
     formState: { errors },
