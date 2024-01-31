@@ -21,9 +21,14 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import OtpInput from "react-otp-input";
 import { DarkContext } from "../global/DarkBar";
+import { BASE_URL } from "../../apiConfig";
+import axios from "axios";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 
-const ChangePass = () => {
+const ChangePass = () => { 
+  const storedUserId = sessionStorage.getItem("userId");
+  console.log("store",storedUserId)
+
   const { isDark } = useContext(DarkContext);
   const Otp = 1234;
   const [enterOtp, setEnterOtp] = useState("");
@@ -50,6 +55,29 @@ const ChangePass = () => {
   } = useForm();
   const onSubmit = async(data) => {
     console.log(data);
+    try{
+      const response=await axios.post(`${BASE_URL}ChangePasswordByAdminId`,data,{
+              headers:{
+                "Content-Type":"application/json",
+              },
+              params:{
+                AdminId:storedUserId
+              }
+      }
+      );
+      
+      if(response?.status===200){
+        const responseData=await response?.data;
+        console.log("responseData",responseData)
+        toast.success(responseData.message)
+      }else{
+        console.error("HTTP error",response.status);
+      } 
+      reset();
+    }catch(error){
+      console.log("error",error);
+    }
+  
     
   };
   const isPasswordStrong = (value) => {

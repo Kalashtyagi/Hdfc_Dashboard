@@ -89,7 +89,7 @@ console.log(onBoardedData,"data");
             title={inProcessData.length}
             subtitle="In Process"
             progress="0.75"
-            increase="+14%"
+            // increase="+14%"
             icon={
               <LoopIcon
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
@@ -108,7 +108,7 @@ console.log(onBoardedData,"data");
             title={onBoardedData.length}
             subtitle="On Boarded"
             progress="0.50"
-            increase="+21%"
+            // increase="+21%"
             icon={
               <HandshakeIcon
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}

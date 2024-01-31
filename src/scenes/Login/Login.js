@@ -62,7 +62,8 @@ export default function Login() {
         toast.success("Login Successfully");
 
       } else {
-        toast.error("Email or password is incorrect");
+        const responseData = await response.json();
+        toast.error(responseData.message);
       }
       reset();
     } catch (error) {
