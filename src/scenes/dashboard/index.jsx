@@ -236,27 +236,9 @@ console.log(onBoardedData,"data");
         </Box>
 
         {/* ROW 3 */}
+        
         <Box
           gridColumn="span 5"
-          gridRow="span 2"
-          backgroundColor={colors.primary[400]}
-          p="30px"
-        >
-          <Typography variant="h5" fontWeight="600">
-            On Boarding by location
-          </Typography>
-          <Box
-            display="flex"
-            flexDirection="row"
-            alignItems="center"
-            mt="25px"
-            justifyContent="space-between"
-          >
-            <PieActiveArc size="175" />
-          </Box>
-        </Box>
-        <Box
-          gridColumn="span 3"
           gridRow="span 2"
           overflow="auto"
           backgroundColor={colors.primary[400]}
@@ -303,10 +285,39 @@ console.log(onBoardedData,"data");
                   >
                     approve
                   </Button>
+                  <Button
+                    variant="contained"
+                    sx={{
+                      fontSize: "15px",
+                      marginRight: "10px",
+                      color: colors.greenAccent[500],
+                    }}
+                  >
+                    disapprove
+                  </Button>
                 </Box>
               </Box>
             </>
           ))}
+        </Box>
+        <Box
+          gridColumn="span 3"
+          gridRow="span 2"
+          backgroundColor={colors.primary[400]}
+          p="30px"
+        >
+          <Typography variant="h5" fontWeight="600">
+            On Boarding by location
+          </Typography>
+          <Box
+            display="flex"
+            flexDirection="row"
+            alignItems="center"
+            mt="25px"
+            justifyContent="space-between"
+          >
+            <PieActiveArc size="175" />
+          </Box>
         </Box>
         {/* <Box
           gridColumn="span 4"

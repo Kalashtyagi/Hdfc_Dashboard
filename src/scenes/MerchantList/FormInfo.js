@@ -26,14 +26,14 @@ const FormInfo = () => {
     },
    
     {
-      field: "virsion",
+      field: "version",
       headerName: "Version",
       flex: 1,
     },
     {
       field: "ceatedBy",
       headerName: "CreatedBy",
-      flex:2
+      flex:3
     },
     {
       field: "formTemplate",

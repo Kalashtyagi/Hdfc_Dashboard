@@ -20,7 +20,7 @@ const Form = () => {
   console.log("store", storedUserId);
   const { isDark } = useContext(DarkContext);
   const isNonMobile = useMediaQuery("(min-width:600px)");
-  const [type, setType] = React.useState("");
+  // const [type, setType] = React.useState("");
   const { isCollapsed } = useContext(SidebarContext);
 
   const handleChange = (event) => {
@@ -35,66 +35,39 @@ const Form = () => {
 
   const onSubmit = async (data) => {
     console.log("data", data);
-    try {
-      const response = await fetch(`${BASE_URL}CreateMerchant`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: data.email,
-          merchantName: data.name,
-          status: "Active",
-          address: data.address,
-          phone: data.contact,
-          merchantType: data.merchantType,
-          adminId: storedUserId,
-        }),
-      });
+    reset();
+    // try {
+    //   const response = await fetch(`${BASE_URL}CreateMerchant`, {
+    //     method: "POST",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify({
+    //       email: data.email,
+    //       merchantName: data.name,
+    //       status: "Active",
+    //       address: data.address,
+    //       phone: data.contact,
+    //       merchantType: data.merchantType,
+    //       adminId: storedUserId,
+    //     }),
+    //   });
 
-      if (response?.status===200) {
-        const responseData = await response.json();
-        toast.success(responseData.message);
+    //   if (response?.status===200) {
+    //     const responseData = await response.json();
+    //     toast.success(responseData.message);
 
-        console.log("API Response:", responseData);
-      } else {
-      }
+    //     console.log("API Response:", responseData);
+    //   } else {
+    //   }
 
-      reset();
-      console.log("res",response)
-    } catch (error) {
-      console.error("API Error:", error);
-    }
+    //   reset();
+    //   console.log("res",response)
+    // } catch (error) {
+    //   console.error("API Error:", error);
+    // }
   };
-  // const handleSubmit = async (event) => {
-  //   event.preventDefault();
-  //   alert("submit");
-
-  //   const formData = new FormData(event.target);
-  //   const data = {};
-  //   formData.forEach((value, key) => {
-  //     data[key] = value;
-  //   });
-  //   console.log("data", data);
-
-  //   try {
-  //     const response = await fetch("url", {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify(data),
-  //     });
-
-  //     if (response.ok) {
-  //       console.log("Data successfully submitted:", data);
-  //     } else {
-  //       console.error("Error submitting data:", response.statusText);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error:", error.message);
-  //   }
-  // };
+  
 
   return (
     <Box
@@ -117,23 +90,40 @@ const Form = () => {
             "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
           }}
         >
-          <TextField
-            fullWidth
-            variant="filled"
-            type="text"
-            label="Name"
-            name="name"
-            sx={{ gridColumn: "span 2" }}
-            InputLabelProps={{
-              style: {
-                color: isDark ? "black" : "white",
-              },
-            }}
-            {...register("name", {
-              required: true,
-            })}
-            required
-          />
+        
+            <TextField
+  fullWidth
+  variant="filled"
+  type="text"
+  label="Name"
+  sx={{ gridColumn: "span 2" }}
+  InputLabelProps={{
+    style: {
+      color: isDark ? "black" : "white",
+    },
+  }}
+  {...register("name", {
+    required: "Name is required",
+    pattern: {
+      value: /^[A-Za-z\s]+$/, 
+      message: "Only alphabetical characters are allowed",
+    },
+  })}
+  error={Boolean(errors.name)}
+  helperText={
+    <span
+      style={{
+        position: "absolute",
+        color: "red",
+        fontSize: "14px",
+        marginLeft:'-10px'  
+      }}
+    >
+      {errors.name?.message}
+    </span>
+  }
+/>
+
 
           <TextField
             fullWidth
@@ -146,11 +136,27 @@ const Form = () => {
               },
             }}
             {...register("email", {
-              required: true,
+              required: "Email is required",
+              pattern: {
+                value: /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}$/,
+                message: "Enter a valid email address",
+              },
             })}
-            name="email"
             sx={{ gridColumn: "span 2" }}
-            required
+            error={Boolean(errors.email)}
+  helperText={
+    <span
+      style={{
+        position: "absolute",
+        color: "red",
+        fontSize: "14px",
+        // top: '50px',
+        marginLeft:'-10px'  
+      }}
+    >
+      {errors.email?.message}
+    </span>
+  }
           />
           <TextField
             fullWidth
@@ -165,9 +171,16 @@ const Form = () => {
               },
             }}
             {...register("address", {
-              required: true,
+              required: "Address is required"
             })}
-            required
+            error={Boolean(errors.address)}
+            helperText={
+              <span style={{position: "absolute",
+              color: "red",
+              fontSize: "14px",
+              // top: '50px',
+              marginLeft:'-10px'  }}>{errors.address?.message}</span>
+            }
           />
           <TextField
             fullWidth
@@ -182,9 +195,18 @@ const Form = () => {
               },
             }}
             {...register("contact", {
-              required: true,
+              required: "Contact is required",
+              pattern: {
+                value: /^(\+91-|\+91|0)?\d{10}$/, // Indian phone number regex
+                message: "Enter a valid Indian phone number",
+              },
             })}
-            required
+            error={Boolean(errors.contact)}
+            helperText={
+              <span style={{position:'absolute',color: "red",
+              fontSize: "14px",
+              marginLeft:'-10px'}}>{errors.contact?.message}</span>
+            }
           />
           <Box sx={{ gridColumn: "span 2" }}>
             <FormControl variant="filled" fullWidth>
@@ -194,21 +216,30 @@ const Form = () => {
               >
                 Merchant Type
               </InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                label="Admin Type"
-                name="merchantType"
-                type="select"
-                {...register("merchantType", {
-                  required: true,
-                })}
-              >
-                <MenuItem value="Level 1">Level 1</MenuItem>
-                <MenuItem value="Level 2">Level 2</MenuItem>
-                <MenuItem value="Level 3">Level 3</MenuItem>
-                <MenuItem value="Level 4">Level 4</MenuItem>
-              </Select>
+               <Select
+  labelId="demo-simple-select-label"
+  id="demo-simple-select"
+  label="Merchant Type"
+  type="select"
+  {...register("merchantType", {
+    required: "Merchant Type is required",
+  })}
+  error={Boolean(errors.merchantType)}
+  helperText={
+    <span style={{ position: 'absolute', fontSize: '14px', marginLeft: '-10px' }}>
+      {errors.merchantType?.message}
+    </span>
+  }
+>
+  <MenuItem disabled value="">
+    Choice option
+  </MenuItem>
+  <MenuItem value="Level 1">Level 1</MenuItem>
+  <MenuItem value="Level 2">Level 2</MenuItem>
+  <MenuItem value="Level 3">Level 3</MenuItem>
+  <MenuItem value="Level 4">Level 4</MenuItem>
+</Select>
+
             </FormControl>
           </Box>
         </Box>

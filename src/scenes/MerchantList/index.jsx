@@ -26,18 +26,18 @@ const Contacts = () => {
     {
       field: "merchantName",
       headerName: "Name",
-      flex: 3,
+      flex: 2,
     },
     
     {
       field: "phone",
       headerName: "Phone Number",
-      flex: 4,
+      flex: 2,
     },
     {
       field: "email",
       headerName: "Email",
-      flex: 6,
+      flex: 3,
     },
     {
       field: "address",

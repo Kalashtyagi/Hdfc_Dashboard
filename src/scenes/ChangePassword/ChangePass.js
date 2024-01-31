@@ -53,6 +53,19 @@ const ChangePass = () => {
     // reset();
     setOpenModal(true);
   };
+  const isPasswordStrong = (value) => {
+    const minLength = 8;
+    const hasUppercase = /[A-Z]/.test(value);
+    const hasLowercase = /[a-z]/.test(value);
+    const hasDigitOrSpecialChar = /[\d!@#$%^&*()_+[\]{};':"\\|,.<>?/~`-]/.test(value);
+
+    return (
+      value.length >= minLength &&
+      hasUppercase &&
+      hasLowercase &&
+      hasDigitOrSpecialChar
+    );
+  };
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const { isCollapsed } = useContext(SidebarContext);
 
@@ -89,36 +102,7 @@ const ChangePass = () => {
       console.log("unsecces");
     }
   };
-  // const handleSubmit = async (event) => {
-  //   event.preventDefault();
-  //   alert("submit");
-
-  //   const formData = new FormData(event.target);
-  //   const data = {};
-  //   formData.forEach((value, key) => {
-  //     data[key] = value;
-  //   });
-  //   console.log("data", data);
-
-  //   try {
-  //     const response = await fetch("url", {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify(data),
-  //     });
-
-  //     if (response.ok) {
-  //       console.log("Data successfully submitted:", data);
-  //     } else {
-  //       console.error("Error submitting data:", response.statusText);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error:", error.message);
-  //   }
-  // };
-
+  
   return (
     <Box
       m="20px"
@@ -156,10 +140,13 @@ const ChangePass = () => {
             }}
             sx={{ gridColumn: "span 2" }}
             {...register("oldpassword", {
-              required: true,
-              minLength: 4,
-              maxLength: 8,
+              required: "Old password is required",
+            
             })}
+            error={Boolean(errors.oldpassword)}
+            helperText={
+              <span style={{position:'absolute',fontSize:'14px',marginLeft:'-10px'}}>{errors.oldpassword?.message}</span>
+            }
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
@@ -170,21 +157,7 @@ const ChangePass = () => {
               ),
             }}
           />
-          <br />
-          <span
-            style={{
-              position: "absolute",
-              color: "red",
-              fontSize: "14px",
-              // marginTop: "50px",
-            }}
-          >
-            {errors.oldpassword?.type === "required" && "Password is required"}
-            {errors.oldpassword?.type === "minLength" &&
-              "Password length must be 4"}
-            {errors.oldpassword?.type === "maxLength" &&
-              "Password contains less than 20 character"}
-          </span>
+        
         </div>
         <div>
           <TextField
@@ -200,10 +173,18 @@ const ChangePass = () => {
               },
             }}
             {...register("newpassword", {
-              required: true,
-              minLength: 4,
-              maxLength: 8,
+              required: "New password is required",
+              minLength: {
+                value: 8,
+                message: "Password must contain at least 8 characters",
+              },
+              validate: (value) => isPasswordStrong(value) || "Password is not strong enough",
+
             })}
+            error={Boolean(errors.newpassword)}
+            helperText={
+              <span style={{position:"absolute",fontSize:'14px',marginLeft:'-10px'}}>{errors.newpassword?.message}</span>
+            }
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
@@ -215,19 +196,7 @@ const ChangePass = () => {
             }}
           />
           <br />
-          <span
-            style={{
-              position: "absolute",
-              color: "red",
-              fontSize: "14px",
-            }}
-          >
-            {errors.newpassword?.type === "required" && "Fill new Password"}
-            {errors.newpassword?.type === "minLength" &&
-              "Password length must be 4"}
-            {errors.newpassword?.type === "maxLength" &&
-              "Password contains less than 20 character"}
-          </span>
+          
         </div>
         <div>
           <TextField
@@ -243,9 +212,14 @@ const ChangePass = () => {
               },
             }}
             {...register("confirmNewPassword", {
-              required: true,
-              validate: (value) => value === watch("newpassword"),
+              required: "Confirm password is required",
+              validate: (value) => value === watch("newpassword")|| "Passwords do not match",
             })}
+            error={Boolean(errors.confirmNewPassword)}
+            helperText={
+              <span style={{position:'absolute',fontSize:'14px',marginLeft:'-10px'}}>{errors.confirmNewPassword?.message}</span>
+              
+            }
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
@@ -257,19 +231,8 @@ const ChangePass = () => {
             }}
           />
           <br />
-          <span
-            style={{
-              position: "absolute",
-              color: "red",
-              fontSize: "14px",
-              // marginTop: "50px",
-            }}
-          >
-            {errors.confirmNewPassword?.type === "required" &&
-              "Password is required"}
-            {errors.confirmNewPassword?.type === "validate" &&
-              "Password does not match"}
-          </span>
+         
+          
         </div>
 
         <Box mt="10px" ml="40px">
@@ -277,7 +240,6 @@ const ChangePass = () => {
             type="submit"
             color="secondary"
             variant="contained"
-            // onClick={handleGenerateOTP}
           >
             Generate OTP
           </Button>

@@ -26,7 +26,7 @@ const defaultTheme = createTheme();
 
 export default function Login() {
   const navigate = useNavigate();
-  const [res, setRes] = useState();
+  const [res, setRes] = useState('');
 
   const [showPassword, setShowPassword] = useState(false);
   function togglePasswordVisibilty() {
@@ -52,21 +52,23 @@ export default function Login() {
       });
 
       if (response?.status===200) {
-        toast.success("Login Successfully");
+        
         const responseData = await response.json();
         setRes(responseData?.data);
-        localStorage.setItem("userId", responseData?.data?.adminId);
+        console.log("respose",responseData?.data)
+        sessionStorage.setItem("userId",responseData?.data?.adminId);
+        console.log("res",res);
         navigate("/dashboard");
+        toast.success("Login Successfully");
+
       } else {
         toast.error("Email or password is incorrect");
       }
       reset();
-      console.log("re", response);
     } catch (error) {
       console.error("API Error:", error);
     }
   };
-  console.log(res, "res");
 
   return (
     <ThemeProvider theme={defaultTheme}>

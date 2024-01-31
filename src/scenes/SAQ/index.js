@@ -40,41 +40,42 @@ const AddForm = () => {
 
   const onSubmit = async (data) => {
     console.log("data", data);
+    reset();
 
-    try {
-      const response = await axios.post(
-        `${BASE_URL}InsertFormData`,
-        {
-          title: data.title,
-          ceatedBy: storedUserId,
-          virsion: data.version,
-          isActive: 1,
-          totalParts: data.totalParts,
-          description: data.description,
-          formTemplate: "string",
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          params: {
-            AdminId: storedUserId,
-          },
-        }
-      );
+    // try {
+    //   const response = await axios.post(
+    //     `${BASE_URL}InsertFormData`,
+    //     {
+    //       title: data.title,
+    //       ceatedBy: storedUserId,
+    //       version: data.version,
+    //       isActive: 1,
+    //       totalParts: data.totalParts,
+    //       description: data.description,
+    //       formTemplate: "string",
+    //     },
+    //     {
+    //       headers: {
+    //         "Content-Type": "application/json",
+    //       },
+    //       params: {
+    //         AdminId: storedUserId,
+    //       },
+    //     }
+    //   );
 
-      if (response?.status === 200) {
-        const responseData = response?.data;
-        toast.success(responseData.message);
-        console.log("API Response:", responseData);
-      } else {
-        console.error("HTTP error! Status:", response.status);
-      }
+    //   if (response?.status === 200) {
+    //     const responseData = response?.data;
+    //     toast.success(responseData.message);
+    //     console.log("API Response:", responseData);
+    //   } else {
+    //     console.error("HTTP error! Status:", response.status);
+    //   }
 
-      reset();
-    } catch (error) {
-      console.error("API Error:", error);
-    }
+    //   reset();
+    // } catch (error) {
+    //   console.error("API Error:", error);
+    // }
   };
 
   return (
@@ -105,15 +106,18 @@ const AddForm = () => {
             label="Title"
             name="title"
             sx={{ gridColumn: "span 2" }}
-            required
             InputLabelProps={{
               style: {
                 color: isDark ? "black" : "white",
               },
             }}
             {...register("title", {
-              required: true,
+              required: "Title is required",
             })}
+            error={Boolean(errors.title)}
+            helperText={
+              <span style={{position:'absolute',fontSize:'14px',marginLeft:'-10px'}}>{errors.title?.message}</span>
+            }
           />
           <TextField
             fullWidth
@@ -122,15 +126,18 @@ const AddForm = () => {
             label="Version"
             name="version"
             sx={{ gridColumn: "span 2" }}
-            required
             InputLabelProps={{
               style: {
                 color: isDark ? "black" : "white",
               },
             }}
             {...register("version", {
-              required: true,
+              required: "Version is required",
             })}
+            error={Boolean(errors.version)}
+            helperText={
+              <span style={{position:'absolute',fontSize:'14px',marginLeft:'-10px'}}>{errors.version?.message}</span>
+            }
           />
           {/* <TextField
             fullWidth
@@ -182,8 +189,12 @@ const AddForm = () => {
                 type="select"
                 name="formType"
                 {...register("formType", {
-                  required: true,
+                  required: "Form Type is required",
                 })}
+                error={Boolean(errors.formType)}
+                helperText={
+                  <span style={{position:'absolute',fontSize:'14px',marginLeft:'-10px'}}>{errors.formType?.message}</span>
+                }
               >
                 <MenuItem value="Saq">Saq</MenuItem>
               </Select>
@@ -217,15 +228,18 @@ const AddForm = () => {
             label="Total Parts"
             name="totalParts"
             sx={{ gridColumn: "span 2" }}
-            required
             InputLabelProps={{
               style: {
                 color: isDark ? "black" : "white",
               },
             }}
             {...register("totalParts", {
-              required: true,
+              required: "Total parts is required",
             })}
+            error={Boolean(errors.totalParts)}
+            helperText={
+              <span style={{position:'absolute',fontSize:'14px',marginLeft:'-10px'}}>{errors.totalParts?.message}</span>
+            }
           />
 
           <TextField
@@ -233,7 +247,6 @@ const AddForm = () => {
             label="Description"
             multiline
             variant="filled"
-            name="description"
             rows={3}
             sx={{ gridColumn: "span 2" }}
             placeholder="Add Description"
@@ -243,8 +256,12 @@ const AddForm = () => {
               },
             }}
             {...register("description", {
-              required: true,
+              required: "Description is required",
             })}
+            error={Boolean(errors.description)}
+            helperText={
+              <span style={{position:'absolute',fontSize:'14px',marginLeft:'-10px'}}>{errors.description?.message}</span>
+            }
           />
         </Box>
         <Box display="flex" justifyContent="center" mt="20px">

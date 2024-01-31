@@ -36,6 +36,20 @@ const CreateAdmin = () => {
   const handleChange = (event) => {
     setType(event.target.value);
   };
+  const isPasswordStrong = (value) => {
+    // Define your password strength criteria here
+    const minLength = 8;
+    const hasUppercase = /[A-Z]/.test(value);
+    const hasLowercase = /[a-z]/.test(value);
+    const hasDigitOrSpecialChar = /[\d!@#$%^&*()_+[\]{};':"\\|,.<>?/~`-]/.test(value);
+
+    return (
+      value.length >= minLength &&
+      hasUppercase &&
+      hasLowercase &&
+      hasDigitOrSpecialChar
+    );
+  };
 
   const {
     register,
@@ -45,36 +59,40 @@ const CreateAdmin = () => {
   } = useForm();
 
   const onSubmit = async (data) => {
-    try {
-      const response = await fetch(`${BASE_URL}InsertAdminDetails`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          fullName: data.fullName,
-          email: data.email,
-          alternative_Email: data.alternative_email,
-          password: data.password,
-          phone_Number: data.contact,
-          admin_SubAdmin: data.adminType,
-          isActive: 1,
-        }),
-      });
-      const responseData = await response.json();
-      console.log(responseData, "rfe");
+    console.log(data);
+    reset();
+    // try {
+      
+    //   const response = await fetch(`${BASE_URL}InsertAdminDetails`, {
+    //     method: "POST",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify({
+    //       fullName: data.fullName,
+    //       email: data.email,
+    //       alternative_Email: data.alternative_email,
+    //       password: data.password,
+    //       phone_Number: data.contact,
+    //       admin_SubAdmin: data.adminType,
+    //       isActive: 1,
+    //       alterNate_Phone_Number:data.alterNate_Phone_Number
+    //     }),
+    //   });
+    //   const responseData = await response.json();
+    //   console.log(responseData, "rfe");
 
-      if (responseData?.statusCode === 200) {
-        toast.success(responseData.message);
-        console.log("API Response:", responseData);
-      } else {
-        console.log("error occurs");
-      }
+    //   if (responseData?.statusCode === 200) {
+    //     toast.success(responseData.message);
+    //     console.log("API Response:", responseData);
+    //   } else {
+    //     console.log("error occurs");
+    //   }
 
-      reset();
-    } catch (error) {
-      console.error("API Error:", error);
-    }
+    //   reset();
+    // } catch (error) {
+    //   console.error("API Error:", error);
+    // }
   };
 
   return (
@@ -111,9 +129,16 @@ const CreateAdmin = () => {
               },
             }}
             {...register("fullName", {
-              required: true,
+              required: "Name is required",
+              pattern: {
+                value: /^[A-Za-z\s]+$/, 
+                message: "Only alphabetical characters are allowed",
+              },
             })}
-            required
+            error={Boolean(errors.fullName)}
+            helperText={
+              <span style={{position:'absolute',fontSize:'14px',marginLeft:'-10px'}}>{errors.fullName?.message}</span>
+            }
           />
 
           <TextField
@@ -129,9 +154,16 @@ const CreateAdmin = () => {
               },
             }}
             {...register("email", {
-              required: true,
+              required: "Email is required",
+              pattern: {
+                value: /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}$/,
+                message: "Enter a valid email address",
+              },
             })}
-            required
+            error={Boolean(errors.email)}
+            helperText={
+              <span style={{position:'absolute',fontSize:'14px',marginLeft:'-10px'}}>{errors.email?.message}</span>
+            }
           />
           <TextField
             fullWidth
@@ -146,9 +178,16 @@ const CreateAdmin = () => {
               },
             }}
             {...register("alternative_email", {
-              required: true,
+              required: "Alternative email is required",
+              pattern: {
+                value: /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}$/,
+                message: "Enter a valid email address",
+              },
             })}
-            required
+            error={Boolean(errors.alternative_email)}
+            helperText={
+              <span style={{position:'absolute',fontSize:'14px',marginLeft:'-10px'}}>{errors.alternative_email?.message}</span>
+            }
           />
           <TextField
             fullWidth
@@ -162,10 +201,13 @@ const CreateAdmin = () => {
               },
             }}
             sx={{ gridColumn: "span 2" }}
-            required
+           
             {...register("password", {
-              required: true,
+              required: "Password is required",
+              validate: (value) => isPasswordStrong(value) || "Password is not strong enough",
             })}
+            error={Boolean(errors.password)}
+            helperText={<span style={{position:'absolute',fontSize:'14px',marginLeft:'-10px'}}>{errors.password?.message}</span>}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
@@ -181,17 +223,24 @@ const CreateAdmin = () => {
             variant="filled"
             type="number"
             label="Phone Number"
-            name="contact"
             InputLabelProps={{
               style: {
                 color: isDark ? "black" : "white",
               },
             }}
             sx={{ gridColumn: "span 2" }}
-            required
-            {...register("contact", {
-              required: true,
+            {...register("phone_Number", {
+              required: "Phone_Number is required",
+              pattern: {
+                value: /^(\+91-|\+91|0)?\d{10}$/, // Indian phone number regex
+                message: "Enter a valid Indian phone number",
+              },
+          
             })}
+            error={Boolean(errors.phone_Number)}
+            helperText={
+              <span style={{position:'absolute',fontSize:'14px',marginLeft:'-10px'}}>{errors.phone_Number?.message}</span>
+            }
           />
           <TextField
             fullWidth
@@ -205,6 +254,18 @@ const CreateAdmin = () => {
               },
             }}
             sx={{ gridColumn: "span 2" }}
+            {...register("alterNate_Phone_Number", {
+              required: "Alternate phone number is required",
+              pattern: {
+                value: /^(\+91-|\+91|0)?\d{10}$/, // Indian phone number regex
+                message: "Enter a valid Indian phone number",
+              },
+          
+            })}
+            error={Boolean(errors.alterNate_Phone_Number)}
+            helperText={
+              <span style={{position:'absolute',fontSize:'14px',marginLeft:'-10px'}}>{errors.alterNate_Phone_Number?.message}</span>
+            }
           />
           <Box sx={{ gridColumn: "span 2" }}>
             <FormControl variant="filled" fullWidth>
@@ -216,13 +277,16 @@ const CreateAdmin = () => {
               </InputLabel>
               <Select
                 labelId="demo-simple-select-label"
-                id="demo-simple-select"
                 label="Admin Type"
                 type="select"
                 name="adminType"
                 {...register("adminType", {
-                  required: true,
+                  required: "Admin Type is required",
                 })}
+                error={Boolean(errors.adminType)}
+                helperText={
+                  <span style={{position:'absolute',fontSize:'14px',marginLeft:'-10px'}}>{errors.adminType?.message}</span>
+                }
               >
                 <MenuItem value="subAdmin">SubAdmin</MenuItem>
                 <MenuItem value="superAdmin">SuperAdmin</MenuItem>
