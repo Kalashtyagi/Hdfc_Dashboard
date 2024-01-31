@@ -32,13 +32,13 @@ const FormInfo = () => {
     },
     {
       field: "ceatedBy",
-      headerName: "CreatedBy",
-      flex:3
+      headerName: "Created By",
+      flex:2
     },
     {
       field: "formTemplate",
-      headerName: "FormTemplate",
-      flex:1
+      headerName: "Form Template",
+      flex:2
     },
     {
       field:'description',
@@ -46,11 +46,11 @@ const FormInfo = () => {
       flex:4
     },{
       field:'totalParts',
-      headerName:'TotalParts',
+      headerName:'Total Parts',
       flex:1
     },{
       field:'isActive',
-      headerName:'IsActive',
+      headerName:'Is Active',
       flex:1
     }
   ];

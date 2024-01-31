@@ -46,13 +46,13 @@ const Contacts = () => {
     },
     {
       field: "merchantType",
-      headerName: "MerchantType",
+      headerName: "Merchant Type",
       flex: 2,
 
     },
     {
       field:'adminId',
-      headerName:'AdminId',
+      headerName:'Admin Id',
       flex: 4,
 
     }

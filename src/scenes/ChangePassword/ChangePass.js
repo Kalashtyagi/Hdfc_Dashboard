@@ -48,10 +48,9 @@ const ChangePass = () => {
     watch,
     reset,
   } = useForm();
-  const onSubmit = (data) => {
+  const onSubmit = async(data) => {
     console.log(data);
-    // reset();
-    setOpenModal(true);
+    
   };
   const isPasswordStrong = (value) => {
     const minLength = 8;
@@ -139,13 +138,13 @@ const ChangePass = () => {
               },
             }}
             sx={{ gridColumn: "span 2" }}
-            {...register("oldpassword", {
+            {...register("old_Password", {
               required: "Old password is required",
             
             })}
-            error={Boolean(errors.oldpassword)}
+            error={Boolean(errors.old_Password)}
             helperText={
-              <span style={{position:'absolute',fontSize:'14px',marginLeft:'-10px'}}>{errors.oldpassword?.message}</span>
+              <span style={{position:'absolute',fontSize:'14px',marginLeft:'-10px'}}>{errors.old_Password?.message}</span>
             }
             InputProps={{
               endAdornment: (
@@ -165,14 +164,13 @@ const ChangePass = () => {
             variant="filled"
             type={showPassword2 ? "text" : "password"}
             label="New Password"
-            name="newpassword"
             sx={{ gridColumn: "span 2" }}
             InputLabelProps={{
               style: {
                 color: isDark ? "black" : "white",
               },
             }}
-            {...register("newpassword", {
+            {...register("new_Password", {
               required: "New password is required",
               minLength: {
                 value: 8,
@@ -181,9 +179,9 @@ const ChangePass = () => {
               validate: (value) => isPasswordStrong(value) || "Password is not strong enough",
 
             })}
-            error={Boolean(errors.newpassword)}
+            error={Boolean(errors.new_Password)}
             helperText={
-              <span style={{position:"absolute",fontSize:'14px',marginLeft:'-10px'}}>{errors.newpassword?.message}</span>
+              <span style={{position:"absolute",fontSize:'14px',marginLeft:'-10px'}}>{errors.new_Password?.message}</span>
             }
             InputProps={{
               endAdornment: (
@@ -211,13 +209,13 @@ const ChangePass = () => {
                 color: isDark ? "black" : "white",
               },
             }}
-            {...register("confirmNewPassword", {
+            {...register("confirm_Password", {
               required: "Confirm password is required",
-              validate: (value) => value === watch("newpassword")|| "Passwords do not match",
+              validate: (value) => value === watch("new_Password")|| "Passwords do not match",
             })}
-            error={Boolean(errors.confirmNewPassword)}
+            error={Boolean(errors.confirm_Password)}
             helperText={
-              <span style={{position:'absolute',fontSize:'14px',marginLeft:'-10px'}}>{errors.confirmNewPassword?.message}</span>
+              <span style={{position:'absolute',fontSize:'14px',marginLeft:'-10px'}}>{errors.confirm_Password?.message}</span>
               
             }
             InputProps={{

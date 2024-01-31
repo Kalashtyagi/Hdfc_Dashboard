@@ -21,38 +21,38 @@ const MerchantForm = () => {
 
   const columns = [
     { field: "submissionID",
-     headerName: "SubmissionId", 
+     headerName: "Submission Id", 
      flex:2
     },
     {
       field: "merchantID",
-      headerName: "MerchantId",
+      headerName: "Merchant Id",
       flex: 2,
     },
    
     {
       field: "formID",
-      headerName: "FormId",
+      headerName: "Form Id",
       flex: 2,
     },
     {
       field: "submissionDate",
-      headerName: "SubmissionDate",
+      headerName: "Submission Date",
       flex: 2,
     },
     {
       field: "isFinalSubmission",
-      headerName: "IsFinalSubmission",
+      headerName: "Is Final Submission",
       flex: 2,
     },
     {
       field:'reviewedBy',
-      headerName:'ReviewedBy',
+      headerName:'Reviewed By',
       flex:2
     },
     {
       field:'reviewComments',
-      headerName:'ReviewComments',
+      headerName:'Review Comments',
       flex:2
     }
   ];
