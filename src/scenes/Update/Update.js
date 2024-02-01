@@ -123,12 +123,9 @@ const handle=async(e)=>{
 const handlePhone=async(e)=>{
   e.preventDefault();
   console.log(phoneDetails)
-  setPhoneDetails({
-    old_Phone_Number:'',
-    new_Phone_Number:''
-  })
+  
   try{
-    const response=await axios.post(`${BASE_URL}ChangePhoneNumberByAdminId?`,phoneDetails,{
+    const response=await axios.post(`${BASE_URL}ChangePhoneNumberByAdminId`,phoneDetails,{
             headers:{
               "Content-Type":"application/json",
             },
@@ -142,6 +139,10 @@ const handlePhone=async(e)=>{
       const responseData=await response?.data;
       console.log("responseData",responseData)
       toast.success(responseData.message)
+      setPhoneDetails({
+        old_Phone_Number:'',
+        new_Phone_Number:'',
+      });
     }else{
       console.log("error occurs")
     } 
@@ -249,6 +250,8 @@ const handlePhone=async(e)=>{
             type="email"
             label="Alternative Old Email"
             name="old_AlterNateEmail"
+            value={alternativeEmail.old_AlterNateEmail}
+
             onChange={handleAlternativeEmailChange}
             InputLabelProps={{
               style: {
@@ -271,7 +274,7 @@ const handlePhone=async(e)=>{
             label="Alternative New Email Address"
             name="new_AlterNateEmail"
             onChange={handleAlternativeEmailChange}
-
+            value={alternativeEmail.new_AlterNateEmail}
             InputLabelProps={{
               style: {
                 color: isDark ? "black" : "white",
@@ -308,6 +311,7 @@ const handlePhone=async(e)=>{
             type="number"
             label="Old Phone Number"
             name="old_Phone_Number"
+            value={phoneDetails.old_Phone_Number}
             onChange={handlePhoneChange}
             InputLabelProps={{
               style: {
@@ -323,6 +327,7 @@ const handlePhone=async(e)=>{
             type="number"
             label="New Phone Number"
             name="new_Phone_Number"
+            value={phoneDetails.new_Phone_Number}
             onChange={handlePhoneChange}
             InputLabelProps={{
               style: {
