@@ -50,8 +50,9 @@ export default function Login() {
         },
         body: JSON.stringify(data),
       });
+console.log("re",response)
+      if (response?.status==200) { 
 
-      if (response?.status===200) {
         
         const responseData = await response.json();
         setRes(responseData?.data);
@@ -60,6 +61,7 @@ export default function Login() {
         console.log("res",res);
         navigate("/dashboard");
         toast.success("Login Successfully");
+
 
       } else {
         const responseData = await response.json();
@@ -179,6 +181,7 @@ export default function Login() {
           </Box>
         </Box>
       </Container>
+      <ToastContainer position="top-center"/>
     </ThemeProvider>
   );
 }

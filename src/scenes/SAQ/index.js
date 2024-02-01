@@ -7,7 +7,7 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import React from "react";
+import React, { useState } from "react";
 import { SidebarContext } from "../global/SidebarContext";
 import { useContext } from "react";
 import Radio from "@mui/material/Radio";
@@ -18,64 +18,65 @@ import { DarkContext } from "../global/DarkBar";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import { BASE_URL } from "../../apiConfig";
-import { toast } from "react-toastify";
+import { toast,ToastContainer } from "react-toastify";
 
 const AddForm = () => {
-  const storedUserId = localStorage.getItem("userId");
+  const storedUserId = sessionStorage.getItem("userId");
 
   const isNonMobile = useMediaQuery("(min-width:600px)");
-  const [type, setType] = React.useState("");
   const { isCollapsed } = useContext(SidebarContext);
   const { isDark } = useContext(DarkContext);
+  const[value,setValue]=useState('');
 
-  const handleChange = (event) => {
-    setType(event.target.value);
-  };
+  
   const {
     register,
     formState: { errors },
     handleSubmit,
     reset,
   } = useForm();
+  const handleFileChange = (e) => {
+    setValue("FormTemplate", e.target.files[0]);
+    console.log(value,"value");
+  };
 
   const onSubmit = async (data) => {
     console.log("data", data);
-    reset();
 
-    // try {
-    //   const response = await axios.post(
-    //     `${BASE_URL}InsertFormData`,
-    //     {
-    //       title: data.title,
-    //       ceatedBy: storedUserId,
-    //       version: data.version,
-    //       isActive: 1,
-    //       totalParts: data.totalParts,
-    //       description: data.description,
-    //       formTemplate: "string",
-    //     },
-    //     {
-    //       headers: {
-    //         "Content-Type": "application/json",
-    //       },
-    //       params: {
-    //         AdminId: storedUserId,
-    //       },
-    //     }
-    //   );
+    try {
+      const response = await axios.post(
+        `${BASE_URL}InsertFormData`,
+        {
+          title: data.title,
+          createdBy: storedUserId,
+          version: data.version,
+          isActive: 1,
+          totalParts: data.totalParts,
+          description: data.description,
+          FormTemplate: data.FormTemplate,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          params: {
+            AdminId: storedUserId,
+          },
+        }
+      );
 
-    //   if (response?.status === 200) {
-    //     const responseData = response?.data;
-    //     toast.success(responseData.message);
-    //     console.log("API Response:", responseData);
-    //   } else {
-    //     console.error("HTTP error! Status:", response.status);
-    //   }
+      if (response?.status === 200) {
+        const responseData = response?.data;
+        toast.success(responseData.message);
+        console.log("API Response:", responseData);
+      } else {
+        console.error("HTTP error! Status:", response.status);
+      }
 
-    //   reset();
-    // } catch (error) {
-    //   console.error("API Error:", error);
-    // }
+      reset();
+    } catch (error) {
+      console.error("API Error:", error);
+    }
   };
 
   return (
@@ -139,41 +140,7 @@ const AddForm = () => {
               <span style={{position:'absolute',fontSize:'14px',marginLeft:'-10px'}}>{errors.version?.message}</span>
             }
           />
-          {/* <TextField
-            fullWidth
-            variant="filled"
-            type="file"
-            name="template"
-            helperText="Template Type"
-            sx={{ gridColumn: "span 2" }}
-            required
-            inputProps={{ accept: ".pdf" }}
-            InputLabelProps={{
-              style: {
-                color: isDark ? "black" : "white",
-              },
-            }}
-            {...register("template", {
-              required: true,
-            })}
-          /> */}
-          {/* <TextField
-            fullWidth
-            variant="filled"
-            type="password"
-            label="Password"
-            name="contact"
-            sx={{ gridColumn: "span 2" }}
-            required
-            InputLabelProps={{
-              style: {
-                color: isDark ? "black" : "white",
-              },
-            }}
-            {...register("email", {
-              required: true,
-            })}
-          /> */}
+          
           <Box sx={{ gridColumn: "span 2" }}>
             <FormControl variant="filled" fullWidth>
               <InputLabel
@@ -262,6 +229,29 @@ const AddForm = () => {
             helperText={
               <span style={{position:'absolute',fontSize:'14px',marginLeft:'-10px'}}>{errors.description?.message}</span>
             }
+          /> 
+            <TextField
+            id="outlined-multiline-static"
+            // label="file"
+            variant="filled"
+            type="file"
+            sx={{ gridColumn: "span 2" }}
+            InputLabelProps={{
+              style: {
+                color: isDark ? "black" : "white",
+              },
+            }}
+            {...register("FormTemplate",{
+              required:'Select file'
+            })}
+            onChange={handleFileChange}
+            error={Boolean(errors.FormTemplate)}
+            helperText={
+              <span style={{position:'absolute',fontSize:'14px',marginLeft:'-10px'}}>{errors.FormTemplate?.message}</span>
+            }
+
+            
+           
           />
         </Box>
         <Box display="flex" justifyContent="center" mt="20px">
@@ -270,6 +260,7 @@ const AddForm = () => {
           </Button>
         </Box>
       </form>
+      <ToastContainer position="top-center"/>
     </Box>
   );
 };

@@ -51,11 +51,11 @@ const Sidebar = () => {
     setIsCollapsed(!isCollapsed);
   };
 
-  const handleLogOut=async()=>{
-    sessionStorage.removeItem("userId");
-    toast.success("successfully Logout")
-    navigate("/");
-  }
+  // const handleLogOut=async()=>{
+  //   sessionStorage.removeItem("userId");
+  //   toast.success("successfully Logout")
+  //   navigate("/");
+  // }
   return (
     <Box
       // sx={{
@@ -240,7 +240,7 @@ const Sidebar = () => {
               selected={selected}
               setSelected={setSelected}
             />
-            <div   onClick={handleLogOut}>
+            {/* <div   onClick={handleLogOut}> */}
             <Item
               title="Sign Out"
               to="/"
@@ -249,7 +249,7 @@ const Sidebar = () => {
               setSelected={setSelected}
             
             />
-            </div>
+            {/* </div> */}
           </Box>
         </Menu>
       </ProSidebar>

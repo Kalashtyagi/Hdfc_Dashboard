@@ -12,11 +12,11 @@ import { SidebarContext } from "../global/SidebarContext";
 import { useContext } from "react";
 import { DarkContext } from "../global/DarkBar";
 import { useForm } from "react-hook-form";
-import { toast } from "react-toastify";
+import { toast,ToastContainer } from "react-toastify";
 import { BASE_URL } from "../../apiConfig";
 
 const Form = () => {
-  const storedUserId = localStorage.getItem("userId");
+  const storedUserId = sessionStorage.getItem("userId");
   console.log("store", storedUserId);
   const { isDark } = useContext(DarkContext);
   const isNonMobile = useMediaQuery("(min-width:600px)");
@@ -35,37 +35,39 @@ const Form = () => {
 
   const onSubmit = async (data) => {
     console.log("data", data);
-    reset();
-    // try {
-    //   const response = await fetch(`${BASE_URL}CreateMerchant`, {
-    //     method: "POST",
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //     body: JSON.stringify({
-    //       email: data.email,
-    //       merchantName: data.name,
-    //       status: "Active",
-    //       address: data.address,
-    //       phone: data.contact,
-    //       merchantType: data.merchantType,
-    //       adminId: storedUserId,
-    //     }),
-    //   });
+    try {
+      const response = await fetch(`${BASE_URL}CreateMerchant`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: data.email,
+          merchantName: data.name,
+          status: "Active",
+          address: data.address,
+          phone: data.contact,
+          merchantType: data.merchantType,
+          adminId: storedUserId,
+        }),
+      });
+      
 
-    //   if (response?.status===200) {
-    //     const responseData = await response.json();
-    //     toast.success(responseData.message);
+      if (response?.status===200) { 
+        const responseData = await response.json();
+        console.log("API Response:", responseData);
 
-    //     console.log("API Response:", responseData);
-    //   } else {
-    //   }
 
-    //   reset();
-    //   console.log("res",response)
-    // } catch (error) {
-    //   console.error("API Error:", error);
-    // }
+        toast.success(responseData?.message);
+
+      } else {
+      }
+
+      reset();
+      console.log("res",response)
+    } catch (error) {
+      console.error("API Error:", error);
+    }
   };
   
 
@@ -249,6 +251,8 @@ const Form = () => {
           </Button>
         </Box>
       </form>
+      <ToastContainer position="top-center"/>
+      
     </Box>
   );
 };

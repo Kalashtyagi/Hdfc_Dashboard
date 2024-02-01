@@ -24,24 +24,17 @@ function App() {
   const navigate = useNavigate();
   const storedUserId = sessionStorage.getItem("userId");
  
-  // useEffect(async() => {
-  //   if (storedUserId) {
+ 
+  // const router=async()=>{
+  //   if(storedUserId){
   //     navigate("/dashboard");
-  //   } else {
+  //   }else{
   //     navigate("/");
   //   }
-  // }, [storedUserId, navigate]);
-
-  const router=async()=>{
-    if(storedUserId){
-      navigate("/dashboard");
-    }else{
-      navigate("/");
-    }
-  }
-  useEffect(()=>{
-    router();
-  },[storedUserId,navigate])
+  // }
+  // useEffect(()=>{
+  //   router();
+  // },[storedUserId,navigate])
 
 
   const isLoginPage = window.location.pathname === "/";
@@ -73,7 +66,7 @@ function App() {
             </Routes>
           </main>
         </div>
-        <ToastContainer position="top-center" />
+        {/* <ToastContainer position="top-center" /> */}
       </ThemeProvider>
     </ColorModeContext.Provider>
   );

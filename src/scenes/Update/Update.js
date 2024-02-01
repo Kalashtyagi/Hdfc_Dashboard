@@ -4,7 +4,7 @@ import Header from "../../components/Header";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { styled } from "@mui/material/styles";
 import { SidebarContext } from "../global/SidebarContext";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { DarkContext } from "../global/DarkBar";
 import { useForm } from "react-hook-form";
 import { BASE_URL } from "../../apiConfig";
@@ -14,6 +14,27 @@ import { toast,ToastContainer } from "react-toastify";
 const Update = () => { 
   const storedUserId = sessionStorage.getItem("userId");
   console.log("userid",storedUserId)
+  const[alternativeEmail,setAlternativeEmail]=useState({
+    new_AlterNateEmail:'',
+    old_AlterNateEmail:''
+  })
+  const[phoneDetails,setPhoneDetails]=useState({
+    old_Phone_Number:'',
+    new_Phone_Number:''
+  })
+  const handleAlternativeEmailChange = (e) => {
+    setAlternativeEmail({
+      ...alternativeEmail,
+      [e.target.name]: e.target.value,
+    });
+  };
+  const handlePhoneChange=(e)=>{
+    e.preventDefault();
+    setPhoneDetails({
+      ...phoneDetails,[e.target.name]:e.target.value
+    })
+  }
+
 
   const {
     register,
@@ -22,13 +43,15 @@ const Update = () => {
     watch,
     reset,
   } = useForm(); 
-  
+
 
 
   const onSubmit = async(data) => {
-    if(data.old_Email==data.new_Email){
+    if(data.old_Email===data.new_Email){
+      console.log("Pm");
       toast.error("old and new Email must not be same");
       reset();
+
       return;
 
     }
@@ -50,9 +73,7 @@ const Update = () => {
         console.log("responseData",responseData)
         toast.success(responseData.message)
       }else{
-        const responseData=await response?.data;
-        console.log("responseData",responseData)
-        // console.error("HTTP error",response.status);
+        console.log("error occurs")
       } 
       reset();
     }catch(error){
@@ -60,19 +81,82 @@ const Update = () => {
     }
   
     
-  };
+  }; 
+const handle=async(e)=>{
+  e.preventDefault();
+  if(alternativeEmail.new_AlterNateEmail==alternativeEmail.old_AlterNateEmail){
+    toast.error("Both email can not be same")
+    console.log("Hello");
+        return;
+  }
+  console.log("aa",alternativeEmail);
+    try{
+    const response=await axios.post(`${BASE_URL}ChangeAlterNateEmailByAdminId`,alternativeEmail,{
+            headers:{
+              "Content-Type":"application/json",
+            },
+            params:{
+              AdminId:storedUserId
+            }
+    }
+    );
+    
+    if(response?.status===200){
+      const responseData=await response?.data;
+      console.log("responseData",responseData)
+      toast.success(responseData.message)
+      setAlternativeEmail({
+        new_AlterNateEmail: '',
+        old_AlterNateEmail: '',
+      });
+    }else{
+      console.log("error occurs")
+    } 
+    
+  }catch(error){
+    console.log("error",error);
+  }
+  
+  
+  console.log(alternativeEmail);
+}
+const handlePhone=async(e)=>{
+  e.preventDefault();
+  console.log(phoneDetails)
+  setPhoneDetails({
+    old_Phone_Number:'',
+    new_Phone_Number:''
+  })
+  try{
+    const response=await axios.post(`${BASE_URL}ChangePhoneNumberByAdminId?`,phoneDetails,{
+            headers:{
+              "Content-Type":"application/json",
+            },
+            params:{
+              AdminId:storedUserId
+            }
+    }
+    );
+    
+    if(response?.status===200){
+      const responseData=await response?.data;
+      console.log("responseData",responseData)
+      toast.success(responseData.message)
+    }else{
+      console.log("error occurs")
+    } 
+   
+    
+  }catch(error){
+    console.log("error",error);
+  }
+}
+
   const { isDark } = useContext(DarkContext);
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const { isCollapsed } = useContext(SidebarContext);
 
-  const handleEmail = async (event) => {
-    
-
   
-
-    
-  };
-
   return (
     <Box
       m="20px"
@@ -99,7 +183,7 @@ const Update = () => {
             variant="filled"
             type="email"
             label="Old Email"
-            name="oldemail"
+            name="old_Email"
             InputLabelProps={{
               style: {
                 color: isDark ? "black" : "white",
@@ -124,6 +208,7 @@ const Update = () => {
             variant="filled"
             type="email"
             label="New Email Address"
+            name="new_Email"
             InputLabelProps={{
               style: {
                 color: isDark ? "black" : "white",
@@ -149,7 +234,7 @@ const Update = () => {
           </Button>
         </Box>
       </form>
-      <form onSubmit={handleEmail} style={{ marginTop: "12px" }}>
+      <form onSubmit={handle} style={{ marginTop: "12px" }}>
         <Box
           display="grid"
           gap="30px"
@@ -163,28 +248,43 @@ const Update = () => {
             variant="filled"
             type="email"
             label="Alternative Old Email"
-            name="alternativeoldemail"
+            name="old_AlterNateEmail"
+            onChange={handleAlternativeEmailChange}
             InputLabelProps={{
               style: {
                 color: isDark ? "black" : "white",
               },
             }}
             sx={{ gridColumn: "span 2" }}
-            required
+            // {...register("old_AlterNateEmail",{
+            //   required:'Email is required'
+            // })}
+            // error={Boolean(errors.old_AlterNateEmail)}
+            // helperText={
+            //   <span style={{position:'absolute',fontSize:'14px',marginLeft:'-10px'}}>{errors.old_AlterNateEmail?.message}</span>
+            // }
           />
           <TextField
             fullWidth
             variant="filled"
             type="email"
             label="Alternative New Email Address"
-            name="alternativenewemail"
+            name="new_AlterNateEmail"
+            onChange={handleAlternativeEmailChange}
+
             InputLabelProps={{
               style: {
                 color: isDark ? "black" : "white",
               },
             }}
             sx={{ gridColumn: "span 2" }}
-            required
+            // {...register("new_AlterNateEmail",{
+            //   required:'New_Email is required'
+            // })}
+            // error={Boolean(errors.new_AlterNateEmail)}
+            // helperText={
+            //   <span style={{position:'absolute',fontSize:'14px',marginLeft:'-10px'}}>{errors.new_AlterNateEmail?.message}</span>
+            // }
           />
         </Box>
         <Box display="flex" justifyContent="flex-start" mt="20px">
@@ -193,7 +293,7 @@ const Update = () => {
           </Button>
         </Box>
       </form>
-      <form onSubmit={handleEmail} style={{ marginTop: "12px" }}>
+      <form onSubmit={handlePhone} style={{ marginTop: "12px" }}>
         <Box
           display="grid"
           gap="30px"
@@ -207,7 +307,8 @@ const Update = () => {
             variant="filled"
             type="number"
             label="Old Phone Number"
-            name="oldcontact"
+            name="old_Phone_Number"
+            onChange={handlePhoneChange}
             InputLabelProps={{
               style: {
                 color: isDark ? "black" : "white",
@@ -221,14 +322,14 @@ const Update = () => {
             variant="filled"
             type="number"
             label="New Phone Number"
-            name="newcontact"
+            name="new_Phone_Number"
+            onChange={handlePhoneChange}
             InputLabelProps={{
               style: {
                 color: isDark ? "black" : "white",
               },
             }}
             sx={{ gridColumn: "span 2" }}
-            required
           />
         </Box>
         <Box display="flex" justifyContent="start" mt="20px">
@@ -237,7 +338,7 @@ const Update = () => {
           </Button>
         </Box>
       </form>
-      <form onSubmit={handleEmail} style={{ marginTop: "12px" }}>
+      <form  style={{ marginTop: "12px" }}>
         <Box
           display="grid"
           gap="30px"
@@ -281,8 +382,8 @@ const Update = () => {
           </Button>
         </Box>
       </form>
-      
-      <ToastContainer position="top-center"/>
+
+      <ToastContainer />
     </Box>
   );
 };

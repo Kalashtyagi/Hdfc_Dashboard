@@ -20,7 +20,7 @@ const Contacts = () => {
     { 
       field: "merchantId",
        headerName: "Id", 
-       flex: 3,
+       flex: 5,
 
       },
     {

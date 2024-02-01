@@ -19,7 +19,7 @@ import { useContext } from "react";
 import { DarkContext } from "../global/DarkBar";
 import { useForm } from "react-hook-form";
 import { BASE_URL } from "../../apiConfig";
-import { toast } from "react-toastify";
+import { toast,ToastContainer} from "react-toastify";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 const CreateAdmin = () => {
@@ -60,39 +60,39 @@ const CreateAdmin = () => {
 
   const onSubmit = async (data) => {
     console.log(data);
-    reset();
-    // try {
+    try {
       
-    //   const response = await fetch(`${BASE_URL}InsertAdminDetails`, {
-    //     method: "POST",
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //     body: JSON.stringify({
-    //       fullName: data.fullName,
-    //       email: data.email,
-    //       alternative_Email: data.alternative_email,
-    //       password: data.password,
-    //       phone_Number: data.contact,
-    //       admin_SubAdmin: data.adminType,
-    //       isActive: 1,
-    //       alterNate_Phone_Number:data.alterNate_Phone_Number
-    //     }),
-    //   });
-    //   const responseData = await response.json();
-    //   console.log(responseData, "rfe");
+      const response = await fetch(`${BASE_URL}InsertAdminDetails`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          fullName: data.fullName,
+          email: data.email,
+          alternative_Email: data.alternative_email,
+          password: data.password,
+          Phone_Number: data.phone_Number,
+          admin_SubAdmin: data.adminType,
+          isActive: 1,
+          alterNate_Phone_Number:data.alterNate_Phone_Number
+        }),
+      });
+       const responseData = await response.json();
+       console.log("res",responseData);
+      // console.log(responseData, "rfe");
 
-    //   if (responseData?.statusCode === 200) {
-    //     toast.success(responseData.message);
-    //     console.log("API Response:", responseData);
-    //   } else {
-    //     console.log("error occurs");
-    //   }
+      if (responseData?.statusCode === 200) {
+        toast.success(responseData.message);
+        console.log("API Response:", response);
+      } else {
+        console.log("error occurs");
+      }
 
-    //   reset();
-    // } catch (error) {
-    //   console.error("API Error:", error);
-    // }
+      reset();
+    } catch (error) {
+      console.error("API Error:", error);
+    }
   };
 
   return (
@@ -299,7 +299,7 @@ const CreateAdmin = () => {
             Create New Admin
           </Button>
         </Box>
-      </form>
+      </form><ToastContainer position="top-center"/>
     </Box>
   );
 };
