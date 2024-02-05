@@ -9,6 +9,9 @@ import { useContext } from "react";
 import { useState,useEffect } from "react";
 import { v4 as uuidv4 } from 'uuid';
 import { BASE_URL } from "../../apiConfig";
+import IconButton from "@mui/material/IconButton";
+import DownloadIcon from "@mui/icons-material/Download";
+
 
 
 const MerchantForm = () => {  
@@ -54,7 +57,35 @@ const MerchantForm = () => {
       field:'reviewComments',
       headerName:'Review Comments',
       flex:2
-    }
+    },
+    {
+      field: "action",
+      headerName: "Action",
+      flex: 2,
+      renderCell: (params) => (
+        <div>
+          {/* <a href={`download-link-for-row-${params.id}`}> */}
+            {/* <IconButton> */}
+              <DownloadIcon />
+            {/* </IconButton> */}
+          {/* </a> */}
+        </div>
+      ),
+    },
+    // {
+    //   field: "action",
+    //   headerName: "Action",
+    //   flex: 2,
+    //   renderCell: (params) => (
+    //     <div>
+    //       <a href={`download-link-for-row-${params.id}`}>
+    //         <IconButton>
+    //           <DownloadIcon />
+    //         </IconButton>
+    //       </a>
+    //     </div>
+    //   ),
+    // },
   ];
   const fetchData=async()=>{
     try{
@@ -74,19 +105,7 @@ const MerchantForm = () => {
     fetchData();
   },[])
   console.log(data);
-  // if (loading) {
-  //   return (
-  //     <Box
-  //       m="20px"
-  //       sx={{
-  //         marginLeft: isCollapsed ? "100px" : "300px",
-  //         transition: "margin-left 0.3s",
-  //       }}
-  //     >
-  //       <CircularProgress />
-  //     </Box>
-  //   );
-  // }
+  
   return (
     <Box
       m="20px"

@@ -66,7 +66,7 @@ function App() {
             </Routes>
           </main>
         </div>
-        {/* <ToastContainer position="top-center" /> */}
+        <ToastContainer position="top-center" />
       </ThemeProvider>
     </ColorModeContext.Provider>
   );

@@ -325,7 +325,7 @@ const ChangePass = () => {
           </Button>
         </DialogActions>
       </Dialog>
-      <ToastContainer />
+      <ToastContainer position="top-center"/>
     </Box>
   );
 };

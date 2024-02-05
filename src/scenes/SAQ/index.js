@@ -39,7 +39,17 @@ const AddForm = () => {
     setValue("FormTemplate", e.target.files[0]);
     console.log(value,"value");
   };
+const validateTotalParts=(value)=>{ 
+  
+  if(value<0){
+    return 'Total part can not be negative'
+  }
+  if (value > 99) {
+    return 'Total parts should be below 100';
+  }
+  return true
 
+}
   const onSubmit = async (data) => {
     console.log("data", data);
 
@@ -202,6 +212,8 @@ const AddForm = () => {
             }}
             {...register("totalParts", {
               required: "Total parts is required",
+              maxLength: 2,              
+              validate:validateTotalParts
             })}
             error={Boolean(errors.totalParts)}
             helperText={

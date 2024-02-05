@@ -9,6 +9,10 @@ import { useContext } from "react";
 import { useState,useEffect } from "react";
 import { v4 as uuidv4 } from 'uuid';
 import { BASE_URL } from "../../apiConfig";
+// import {IconButton} from 
+import IconButton from "@mui/material/IconButton";
+// import DownloadIcon from "@mui/icons-material/CloudDownload";
+import DownloadIcon from '@mui/icons-material/Download';
 
 
 const FormInfo = () => {
@@ -52,7 +56,36 @@ const FormInfo = () => {
       field:'isActive',
       headerName:'Is Active',
       flex:1
-    }
+    },
+    {
+      field: "action",
+      headerName: "Action",
+      flex: 2,
+      renderCell: (params) => (
+        <div >
+          {/* <a href={`download-link-for-row-${params.id}`}> */}
+            {/* <IconButton> */}
+              <DownloadIcon />
+            {/* </IconButton> */}
+          {/* </a> */}
+        </div>
+      ),
+    },
+    // {
+    //   field: "action",
+    //   headerName: "Action",
+    //   flex: 2,
+    //   renderCell: (params) => (
+    //     <div>
+    //       {/* You can customize the download icon and link here */}
+    //       <a href={`download-link-for-row-${params.id}`}>
+    //         <IconButton>
+    //           <DownloadIcon />
+    //         </IconButton>
+    //       </a>
+    //     </div>
+    //   ),
+    // },
   ];
   const fetchData=async()=>{
     try{

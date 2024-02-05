@@ -31,7 +31,10 @@ const Form = () => {
     formState: { errors },
     handleSubmit,
     reset,
-  } = useForm();
+  } = useForm({defaultValues: {
+    merchantType: "", // Set the initial value to an empty string or one of the available options
+    /* other form fields with default values */
+  },});
 
   const onSubmit = async (data) => {
     console.log("data", data);

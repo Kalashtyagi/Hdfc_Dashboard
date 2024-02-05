@@ -13,7 +13,6 @@ import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
 import LoopIcon from "@mui/icons-material/Loop";
 import HandshakeIcon from "@mui/icons-material/Handshake";
 import BookOnlineSharpIcon from "@mui/icons-material/BookOnlineSharp";
-// import SubtitlesOffSharpIcon from "@mui/icons-material/SubtitlesOffSharp";
 import Header from "../../components/Header";
 import LineChart from "../../components/LineChart";
 import StatBox from "../../components/StatBox";
@@ -28,14 +27,16 @@ import FormLabel from "@mui/material/FormLabel";
 import { SidebarContext } from "../global/SidebarContext";
 import { useContext,useState,useEffect } from "react";
 import { BASE_URL } from "../../apiConfig";
+import { Popover } from "@mui/material";
 
 const Dashboard = () => { 
    console.log(process.env.REACT_APP_BASE_URL,"d");
     const [data,setData]=useState([]);
     const[onBoardedData,setOnBoardedData]=useState([]);
     const[inProcessData,setInProcessData]=useState([]);
-
-  const theme = useTheme();
+    const[getAllMerchantFromSub,setGetAllMerchantFromSub]=useState([]);
+    const [notMatchingData, setNotMatchingData] = useState([]);
+    const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const { isCollapsed } = useContext(SidebarContext);
   const fetchData=async()=>{
@@ -44,8 +45,9 @@ const Dashboard = () => {
 
       const result=await response.json();
       if(result?.statusCode===200){ 
+        setGetAllMerchantFromSub(result?.data);
+        
         setOnBoardedData(result?.data?.filter((item)=>item.isFinalSubmission))
-        setInProcessData(result?.data?.filter((item)=>!item.isFinalSubmission))
         setData(result?.data);
       }
       
@@ -53,10 +55,69 @@ const Dashboard = () => {
       console.log(error,"error");
     }
   }
+  const getAllMerchant=async()=>{
+    try{
+      const response=await fetch(`${BASE_URL}GetallMerchant`)
+      const result=await response.json();
+       if(result?.statusCode===200){ 
+        setInProcessData(result?.data);
+        
+       }
+     
+    }catch(error){
+      console.log("error",error);
+    }
+  }
+  console.log("inprocess",inProcessData)
   useEffect(()=>{
     fetchData();
+    getAllMerchant();
+
   },[])
-console.log(onBoardedData,"data");
+
+  
+  const complex = getAllMerchantFromSub.some(item1 => !inProcessData.some(item2 => item1.merchantId === item2.merchantId));
+
+  console.log("not matching", complex);
+
+  // useEffect(() => {
+  //   const filteredData = getAllMerchantFromSub.filter(
+  //     (item1) => !inProcessData.some((item2) => item1.merchantId === item2.merchantId)
+  //   );
+  //   setNotMatchingData(...notMatchingData,filteredData);
+  // }, [getAllMerchantFromSub, inProcessData]);
+  console.log("not match",notMatchingData)
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [selectedItem, setSelectedItem] = useState(null);
+
+  // ... other code
+
+  const handlePopoverOpen = (event, item) => {
+    setAnchorEl(event.currentTarget);
+    setSelectedItem(item);
+  };
+
+  const handlePopoverClose = () => {
+    setAnchorEl(null);
+    setSelectedItem(null);
+  };
+
+  const handleApprove = () => {
+    // Handle approval logic here
+    console.log("Approved:", selectedItem);
+
+    // Close popover
+    handlePopoverClose();
+  };
+
+  const handleDisapprove = () => {
+    // Handle disapproval logic here
+    console.log("Disapproved:", selectedItem);
+
+    // Close popover
+    handlePopoverClose();
+  };
+
   return (
     <Box
       m="20px"
@@ -86,9 +147,9 @@ console.log(onBoardedData,"data");
           justifyContent="center"
         >
           <StatBox
-            title={inProcessData.length}
+            title={complex.length}
             subtitle="In Process"
-            progress="0.75"
+            progress="0.2"
             // increase="+14%"
             icon={
               <LoopIcon
@@ -116,44 +177,7 @@ console.log(onBoardedData,"data");
             }
           />
         </Box>
-        {/* <Box
-          gridColumn="span 2"
-          backgroundColor={colors.primary[400]}
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-        >
-          <StatBox
-            title="32,441"
-            subtitle="Ticket Raised"
-            progress="0.30"
-            increase="+5%"
-            icon={
-              <BookOnlineSharpIcon
-                sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
-              />
-            }
-          />
-        </Box>
-        <Box
-          gridColumn="span 2"
-          backgroundColor={colors.primary[400]}
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-        >
-          <StatBox
-            title="1,325,134"
-            subtitle="Ticket Closed"
-            progress="0.80"
-            increase="+43%"
-            icon={
-              <HandshakeIcon
-                sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
-              />
-            }
-          />
-        </Box> */}
+        
         <Box
           gridColumn="span 4"
           // gridRow="span 2"
@@ -282,6 +306,8 @@ console.log(onBoardedData,"data");
                       marginRight: "10px",
                       color: colors.greenAccent[500],
                     }}
+                    onClick={(e) => handlePopoverOpen(e, newItem)}
+
                   >
                     approve
                   </Button>
@@ -292,6 +318,8 @@ console.log(onBoardedData,"data");
                       marginRight: "10px",
                       color: colors.greenAccent[500],
                     }}
+                    onClick={(e) => handlePopoverOpen(e, newItem)}
+
                   >
                     disapprove
                   </Button>
@@ -319,24 +347,31 @@ console.log(onBoardedData,"data");
             <PieActiveArc size="175" />
           </Box>
         </Box>
-        {/* <Box
-          gridColumn="span 4"
-          gridRow="span 2"
-          backgroundColor={colors.primary[400]}
-          padding="30px"
-        >
-          <Typography
-            variant="h5"
-            fontWeight="600"
-            sx={{ marginBottom: "15px" }}
-          >
-            Geography Based Traffic
-          </Typography>
-          <Box height="200px">
-            <GeographyChart isDashboard={true} />
-          </Box>
-        </Box> */}
+       
       </Box>
+      <Popover
+        open={Boolean(anchorEl)}
+        anchorEl={anchorEl}
+        onClose={handlePopoverClose}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+        transformOrigin={{
+          vertical: "bottom",
+          horizontal: "right",
+        }}
+      >
+        <Box p={2}style={{textAlign:'center'}} >
+          <Typography>Are you sure you want to {selectedItem ? `approve ${selectedItem.merchant}` : ""}?</Typography>
+          <Button  size="small" variant="contained" onClick={handleApprove} color="success">
+            Approve
+          </Button>&nbsp;
+          <Button size="small"  variant="contained"  onClick={handlePopoverClose} color="error">
+            Cancel
+          </Button>
+        </Box>
+      </Popover>
     </Box>
   );
 };
