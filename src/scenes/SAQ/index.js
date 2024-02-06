@@ -22,6 +22,7 @@ import { toast,ToastContainer } from "react-toastify";
 
 const AddForm = () => {
   const storedUserId = sessionStorage.getItem("userId");
+  console.log("userid",storedUserId)
 
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const { isCollapsed } = useContext(SidebarContext);
@@ -52,19 +53,38 @@ const validateTotalParts=(value)=>{
 }
   const onSubmit = async (data) => {
     console.log("data", data);
+    const fileInput = document.querySelector('input[name="FormTemplate"]');
+  const fileType = fileInput.files[0]?.type;
+
+  console.log("File Type:", fileType);
+
+  const formData = new FormData();
+
+  // Append form fields to the FormData object
+  formData.append("title", data.title);
+  formData.append("createdBy", storedUserId);
+  formData.append("version", data.version);
+  formData.append("isActive", 1);
+  formData.append("totalParts", data.totalParts);
+  formData.append("description", data.description);
+  // formData.append("formType", data.formType);
+
+  // Append the file
+  formData.append("FormTemplate",fileType);
+
 
     try {
       const response = await axios.post(
-        `${BASE_URL}InsertFormData`,
-        {
-          title: data.title,
-          createdBy: storedUserId,
-          version: data.version,
-          isActive: 1,
-          totalParts: data.totalParts,
-          description: data.description,
-          FormTemplate: data.FormTemplate,
-        },
+        `${BASE_URL}InsertFormData`,formData,
+        // {
+        //   title: data.title,
+        //   createdBy: storedUserId,
+        //   version: data.version,
+        //   isActive: 1,
+        //   totalParts: data.totalParts,
+        //   description: data.description,
+        //   FormTemplate:fileType,
+        // },
         {
           headers: {
             "Content-Type": "application/json",
@@ -177,27 +197,7 @@ const validateTotalParts=(value)=>{
               </Select>
             </FormControl>
           </Box>
-          {/* <FormControl>
-            <FormLabel id="demo-row-radio-buttons-group-label">
-              Is Active
-            </FormLabel>
-            <RadioGroup
-              row
-              aria-labelledby="demo-row-radio-buttons-group-label"
-              name="row-radio-buttons-group"
-            >
-              <FormControlLabel
-                value="Yes"
-                control={<Radio />}
-                label="Yes Active"
-              />
-              <FormControlLabel
-                value="No"
-                control={<Radio />}
-                label="Not Active"
-              />
-            </RadioGroup>
-          </FormControl> */}
+         
           <TextField
             fullWidth
             variant="filled"
@@ -244,7 +244,6 @@ const validateTotalParts=(value)=>{
           /> 
             <TextField
             id="outlined-multiline-static"
-            // label="file"
             variant="filled"
             type="file"
             sx={{ gridColumn: "span 2" }}

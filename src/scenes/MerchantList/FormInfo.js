@@ -13,6 +13,10 @@ import { BASE_URL } from "../../apiConfig";
 import IconButton from "@mui/material/IconButton";
 // import DownloadIcon from "@mui/icons-material/CloudDownload";
 import DownloadIcon from '@mui/icons-material/Download';
+import axios from "axios";
+import {
+  Button} from "@mui/material";
+
 
 
 const FormInfo = () => {
@@ -20,6 +24,59 @@ const FormInfo = () => {
   const[data,setData]=useState([]);
   const colors = tokens(theme.palette.mode);
   const { isCollapsed } = useContext(SidebarContext);
+
+ 
+  // const downloadPdf = async (id) => {
+  //   console.log(id);
+  //   
+  //   try {
+  //     const response = await fetch(`${BASE_URL}DownloadPDF?FormId=${id}`, {
+  //       method: 'GET',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //     });
+  //     const result = await response.json();
+  //     console.log("result",result);
+  //   } catch (error) {
+  //     console.log("error", error);
+  //   }
+  // }
+
+  const downloadPdf = async (id) => {
+    try {
+      const response = await axios.get(
+        `${BASE_URL}DownloadPDF?FormId=${id}`
+      );
+
+      console.log('response 75', response.data);
+
+      const jsonData = JSON.stringify(response.data, null, 2);
+      console.log('83', jsonData);
+
+      if (
+        response.statusCode === 200 &&
+        response.data &&
+        response.data.fileUrl
+      ) {
+        const fileUrl = response.data.fileUrl;
+
+        const link = document.createElement('a');
+        link.href = fileUrl;
+        link.download = response.data.name || 'download.xlsx';
+        document.body.appendChild(link);
+        link.click();
+
+        document.body.removeChild(link);
+      } else {
+        console.error('File URL not found in the response');
+      }
+    } catch (error) {
+      console.error('Error downloading file:', error);
+    }
+  };
+
+  
 
   const columns = [
     { field: "formId", headerName: "ID" ,flex:3},
@@ -35,15 +92,11 @@ const FormInfo = () => {
       flex: 1,
     },
     {
-      field: "ceatedBy",
+      field: "createdBy",
       headerName: "Created By",
       flex:2
     },
-    {
-      field: "formTemplate",
-      headerName: "Form Template",
-      flex:2
-    },
+
     {
       field:'description',
       headerName:'Description',
@@ -57,35 +110,29 @@ const FormInfo = () => {
       headerName:'Is Active',
       flex:1
     },
-    {
-      field: "action",
-      headerName: "Action",
-      flex: 2,
-      renderCell: (params) => (
-        <div >
-          {/* <a href={`download-link-for-row-${params.id}`}> */}
-            {/* <IconButton> */}
-              <DownloadIcon />
-            {/* </IconButton> */}
-          {/* </a> */}
-        </div>
-      ),
-    },
     // {
     //   field: "action",
     //   headerName: "Action",
     //   flex: 2,
     //   renderCell: (params) => (
-    //     <div>
-    //       {/* You can customize the download icon and link here */}
-    //       <a href={`download-link-for-row-${params.id}`}>
-    //         <IconButton>
-    //           <DownloadIcon />
-    //         </IconButton>
-    //       </a>
+    //     <div style={{cursor:'pointer'}} >
+    //     <Button size="small" variant="contained" color="success" >
+    //         Edit
+    //       </Button>
     //     </div>
     //   ),
     // },
+    // {
+    //   field: "action",
+    //   headerName: "Action",
+    //   flex: 2,
+    //   renderCell: (params) => (
+    //     <div style={{cursor:'pointer'}} >
+    //           <DownloadIcon  onClick={()=>downloadPdf(params.row?.formId)} />
+    //     </div>
+    //   ),
+    // },
+  
   ];
   const fetchData=async()=>{
     try{
@@ -98,7 +145,6 @@ const FormInfo = () => {
       console.log(error);
     }
   }
-  console.log(data);
   useEffect(()=>{
     fetchData();
   },[])

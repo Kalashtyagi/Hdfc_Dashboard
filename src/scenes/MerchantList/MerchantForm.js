@@ -1,4 +1,4 @@
-import { Box , CircularProgress} from "@mui/material";
+import { Box , CircularProgress,Button} from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
 import { mockDataContacts } from "../../data/mockData";
@@ -60,32 +60,34 @@ const MerchantForm = () => {
     },
     {
       field: "action",
-      headerName: "Action",
-      flex: 2,
+      headerame: "Action",
+      flex: 3,
       renderCell: (params) => (
-        <div>
-          {/* <a href={`download-link-for-row-${params.id}`}> */}
-            {/* <IconButton> */}
-              <DownloadIcon />
-            {/* </IconButton> */}
-          {/* </a> */}
+        <div style={{cursor:'pointer',textAlign:'center'}}>
+        <Button size="small" variant="contained" color="success" >
+            Approve
+          </Button>&nbsp; <Button size="small" variant="contained" color="error" >
+            Disapprove
+          </Button>
         </div>
       ),
     },
+
     // {
     //   field: "action",
     //   headerName: "Action",
     //   flex: 2,
     //   renderCell: (params) => (
     //     <div>
-    //       <a href={`download-link-for-row-${params.id}`}>
-    //         <IconButton>
+    //       {/* <a href={`download-link-for-row-${params.id}`}> */}
+    //         {/* <IconButton> */}
     //           <DownloadIcon />
-    //         </IconButton>
-    //       </a>
+    //         {/* </IconButton> */}
+    //       {/* </a> */}
     //     </div>
     //   ),
     // },
+    
   ];
   const fetchData=async()=>{
     try{

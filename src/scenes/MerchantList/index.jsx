@@ -1,4 +1,4 @@
-import { Box } from "@mui/material";
+import { Box,Button} from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
 import { mockDataContacts } from "../../data/mockData";
@@ -55,7 +55,19 @@ const Contacts = () => {
       headerName:'Admin Id',
       flex: 4,
 
-    }
+    },
+    {
+      field: "action",
+      headerName: "Action",
+      flex: 2,
+      renderCell: (params) => (
+        <div style={{cursor:'pointer'}} >
+        <Button size="small" variant="contained" color="success" >
+            Edit
+          </Button>
+        </div>
+      ),
+    },
    
   ]; 
   const fetchData=async()=>{

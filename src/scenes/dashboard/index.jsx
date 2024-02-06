@@ -1,3 +1,4 @@
+
 import {
   Box,
   Button,
@@ -25,58 +26,58 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import FormControl from "@mui/material/FormControl";
 import FormLabel from "@mui/material/FormLabel";
 import { SidebarContext } from "../global/SidebarContext";
-import { useContext,useState,useEffect } from "react";
+import { useContext, useState, useEffect } from "react";
 import { BASE_URL } from "../../apiConfig";
 import { Popover } from "@mui/material";
 
-const Dashboard = () => { 
-   console.log(process.env.REACT_APP_BASE_URL,"d");
-    const [data,setData]=useState([]);
-    const[onBoardedData,setOnBoardedData]=useState([]);
-    const[inProcessData,setInProcessData]=useState([]);
-    const[getAllMerchantFromSub,setGetAllMerchantFromSub]=useState([]);
-    const [notMatchingData, setNotMatchingData] = useState([]);
-    const theme = useTheme();
+const Dashboard = () => {
+  console.log(process.env.REACT_APP_BASE_URL, "d");
+  const [data, setData] = useState([]);
+  const [onBoardedData, setOnBoardedData] = useState([]);
+  const [inProcessData, setInProcessData] = useState([]);
+  const [getAllMerchantFromSub, setGetAllMerchantFromSub] = useState([]);
+  const [notMatchingData, setNotMatchingData] = useState([]);
+  const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const { isCollapsed } = useContext(SidebarContext);
-  const fetchData=async()=>{
-    try{
-      const response=await fetch(`${BASE_URL}GetallMerchantFormSubmissions`)
+  const fetchData = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}GetallMerchantFormSubmissions`);
 
-      const result=await response.json();
-      if(result?.statusCode===200){ 
+      const result = await response.json();
+      if (result?.statusCode === 200) {
         setGetAllMerchantFromSub(result?.data);
-        
-        setOnBoardedData(result?.data?.filter((item)=>item.isFinalSubmission))
+
+        setOnBoardedData(
+          result?.data?.filter((item) => item.isFinalSubmission)
+        );
         setData(result?.data);
       }
-      
-    }catch(error){
-      console.log(error,"error");
+    } catch (error) {
+      console.log(error, "error");
     }
-  }
-  const getAllMerchant=async()=>{
-    try{
-      const response=await fetch(`${BASE_URL}GetallMerchant`)
-      const result=await response.json();
-       if(result?.statusCode===200){ 
+  };
+  const getAllMerchant = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}GetallMerchant`);
+      const result = await response.json();
+      if (result?.statusCode === 200) {
         setInProcessData(result?.data);
-        
-       }
-     
-    }catch(error){
-      console.log("error",error);
+      }
+    } catch (error) {
+      console.log("error", error);
     }
-  }
-  console.log("inprocess",inProcessData)
-  useEffect(()=>{
+  };
+  console.log("inprocess", inProcessData);
+  useEffect(() => {
     fetchData();
     getAllMerchant();
+  }, []);
 
-  },[])
-
-  
-  const complex = getAllMerchantFromSub.some(item1 => !inProcessData.some(item2 => item1.merchantId === item2.merchantId));
+  const complex = getAllMerchantFromSub.some(
+    (item1) =>
+      !inProcessData.some((item2) => item1.merchantId === item2.merchantId)
+  );
 
   console.log("not matching", complex);
 
@@ -86,7 +87,7 @@ const Dashboard = () => {
   //   );
   //   setNotMatchingData(...notMatchingData,filteredData);
   // }, [getAllMerchantFromSub, inProcessData]);
-  console.log("not match",notMatchingData)
+  console.log("not match", notMatchingData);
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
 
@@ -177,52 +178,96 @@ const Dashboard = () => {
             }
           />
         </Box>
-        
-        <Box
-          gridColumn="span 4"
-          // gridRow="span 2"
-          // backgroundColor={colors.primary[400]}
-          // overflow="hidden"
-        >
-          <Box
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
-            borderBottom={`4px solid ${colors.primary[500]}`}
-            colors={colors.grey[100]}
-            p="10px"
+        <Box gridColumn="span 4" position="relative">
+          <div
+            style={{
+              position: "fixed",
+              top: "100px", // Adjust the top position as needed
+              right: "0", // Adjust the left position as needed
+              height: "350px",
+              // border: "2px solid grey",
+              width: "400px",
+              overflowY: "scroll",
+            }}
           >
-            <Typography color={colors.grey[100]} variant="h5" fontWeight="600">
-              Notifications
-            </Typography>
-          </Box>
-          {Notifications.map((notification, i) => (
-            <Box
-              key={`${notification.txId}-${i}`}
-              display="flex"
-              justifyContent="space-between"
-              alignItems="center"
-              // borderBottom={`4px solid ${colors.primary[500]}`}
-              p="15px"
+            <h6
+              style={{
+                textAlign: "center",
+                position: "fixed",
+                right: "140px",
+                color: "#3da58a",
+                fontSize: "26px",
+                margin: "0",
+                // backgroundColor: "white",
+              }}
             >
-              <Box>
-                <Typography
-                  color={colors.greenAccent[500]}
-                  variant="h5"
-                  fontWeight="600"
+              Admin log
+            </h6>
+            <br />
+            <br />
+            <div>
+              {Notifications.map((not, index) => (
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    padding: "5px",
+                  }}
+                  key={index}
                 >
-                  {notification.txId}
-                </Typography>
-                <Typography color={colors.grey[100]}>
-                  {notification.user}
-                </Typography>
-              </Box>
-              <Box color={colors.grey[100]}>{notification.date}</Box>
-              
-            </Box>
-          ))}
+                  <div>
+                    <p>{not.user}</p>
+                    <p style={{ color: "#3da58a" }}>{not.txId}</p>
+                  </div>
+
+                  <p>{not.date}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div
+            style={{
+              position: "fixed",
+              top: "470px", // Adjust the top position as needed
+              right: "0", // Adjust the left position as needed
+              height: "350px",
+              // border: "2px solid grey",
+              width: "400px",
+              overflowY: "scroll",
+            }}
+          >
+            <h6
+              style={{
+                textAlign: "center",
+                color: "#3da58a",
+                fontSize: "26px",
+                margin: "0",
+                right: "140px",
+                position: "fixed",
+                // backgroundColor: "white",
+              }}
+            >
+              Merchant log
+            </h6>
+            <br />
+            <br />
+            {Notifications.map((not, index) => (
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  padding: "5px",
+                }}
+                key={index}
+              >
+                <p>{not.user}</p>
+                <p style={{ color: "#3da58a" }}>{not.date}</p>
+              </div>
+            ))}
+          </div>
         </Box>
-       
+
         <Box
           gridColumn="span 8"
           gridRow="span 2"
@@ -260,7 +305,7 @@ const Dashboard = () => {
         </Box>
 
         {/* ROW 3 */}
-        
+
         <Box
           gridColumn="span 5"
           gridRow="span 2"
@@ -307,7 +352,6 @@ const Dashboard = () => {
                       color: colors.greenAccent[500],
                     }}
                     onClick={(e) => handlePopoverOpen(e, newItem)}
-
                   >
                     approve
                   </Button>
@@ -319,7 +363,6 @@ const Dashboard = () => {
                       color: colors.greenAccent[500],
                     }}
                     onClick={(e) => handlePopoverOpen(e, newItem)}
-
                   >
                     disapprove
                   </Button>
@@ -347,7 +390,6 @@ const Dashboard = () => {
             <PieActiveArc size="175" />
           </Box>
         </Box>
-       
       </Box>
       <Popover
         open={Boolean(anchorEl)}
@@ -362,12 +404,28 @@ const Dashboard = () => {
           horizontal: "right",
         }}
       >
-        <Box p={2}style={{textAlign:'center'}} >
-          <Typography>Are you sure you want to {selectedItem ? `approve ${selectedItem.merchant}` : ""}?</Typography>
-          <Button  size="small" variant="contained" onClick={handleApprove} color="success">
+        <Box p={2} style={{ textAlign: "center" }}>
+          <Typography>
+            Are you sure you want to{" "}
+            {selectedItem ? `approve ${selectedItem.merchant}` : ""}?
+          </Typography>
+          <textarea placeholder="Reason for disapprove" required />
+          <br />
+          <Button
+            size="small"
+            variant="contained"
+            onClick={handleApprove}
+            color="success"
+          >
             Approve
-          </Button>&nbsp;
-          <Button size="small"  variant="contained"  onClick={handlePopoverClose} color="error">
+          </Button>
+          &nbsp;
+          <Button
+            size="small"
+            variant="contained"
+            onClick={handlePopoverClose}
+            color="error"
+          >
             Cancel
           </Button>
         </Box>
