@@ -48,11 +48,11 @@ const MerchantForm = () => {
       headerName: "Is Final Submission",
       flex: 2,
     },
-    {
-      field:'reviewedBy',
-      headerName:'Reviewed By',
-      flex:2
-    },
+    // {
+    //   field:'reviewedBy',
+    //   headerName:'Reviewed By',
+    //   flex:2
+    // },
     {
       field:'reviewComments',
       headerName:'Review Comments',
@@ -63,12 +63,15 @@ const MerchantForm = () => {
       headerame: "Action",
       flex: 3,
       renderCell: (params) => (
-        <div style={{cursor:'pointer',textAlign:'center'}}>
+        <div style={{cursor:'pointer',display:'flex',justifyContent:'center', textAlign:'center'}}>
         <Button size="small" variant="contained" color="success" >
             Approve
           </Button>&nbsp; <Button size="small" variant="contained" color="error" >
             Disapprove
-          </Button>
+          </Button>&nbsp;&nbsp;
+          {/* <Button  size="small" variant="contained" color="primary" style={{cursor:'pointer'}} > */}
+              <DownloadIcon  onClick={()=>downloadPdf(params.row?.formId)}/>
+      {/* </Button> */}
         </div>
       ),
     },

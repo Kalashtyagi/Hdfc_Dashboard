@@ -51,64 +51,49 @@ const validateTotalParts=(value)=>{
   return true
 
 }
-  const onSubmit = async (data) => {
-    console.log("data", data);
-    const fileInput = document.querySelector('input[name="FormTemplate"]');
+
+const onSubmit = async (data) => {
+  const fileInput = document.querySelector('input[name="FormTemplate"]');
   const fileType = fileInput.files[0]?.type;
-
-  console.log("File Type:", fileType);
-
   const formData = new FormData();
-
-  // Append form fields to the FormData object
   formData.append("title", data.title);
   formData.append("createdBy", storedUserId);
   formData.append("version", data.version);
-  formData.append("isActive", 1);
+  formData.append("isActive", true);
   formData.append("totalParts", data.totalParts);
   formData.append("description", data.description);
-  // formData.append("formType", data.formType);
+  formData.append("FormTemplate", fileInput.files[0]);
 
-  // Append the file
-  formData.append("FormTemplate",fileType);
-
-
-    try {
-      const response = await axios.post(
-        `${BASE_URL}InsertFormData`,formData,
-        // {
-        //   title: data.title,
-        //   createdBy: storedUserId,
-        //   version: data.version,
-        //   isActive: 1,
-        //   totalParts: data.totalParts,
-        //   description: data.description,
-        //   FormTemplate:fileType,
-        // },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          params: {
-            AdminId: storedUserId,
-          },
-        }
-      );
-
-      if (response?.status === 200) {
-        const responseData = response?.data;
-        toast.success(responseData.message);
-        console.log("API Response:", responseData);
-      } else {
-        console.error("HTTP error! Status:", response.status);
+  try {
+    const response = await axios.post(
+      `${BASE_URL}InsertFormData`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        params: {
+          AdminId: storedUserId,
+        },
       }
+    );
 
-      reset();
-    } catch (error) {
-      console.error("API Error:", error);
+    if (response?.status === 200) {
+      const responseData = response?.data;
+      toast.success(responseData.message);
+      console.log("API Response:", responseData);
+    } else {
+      console.error("HTTP error! Status:", response.status);
     }
-  };
 
+    reset(); 
+  } catch (error) {
+    console.error("API Error:", error);
+  }
+};
+
+ 
+ 
   return (
     <Box
       m="20px"

@@ -68,30 +68,22 @@ const Dashboard = () => {
       console.log("error", error);
     }
   };
-  console.log("inprocess", inProcessData);
+  
   useEffect(() => {
     fetchData();
     getAllMerchant();
   }, []);
-
-  const complex = getAllMerchantFromSub.some(
-    (item1) =>
-      !inProcessData.some((item2) => item1.merchantId === item2.merchantId)
-  );
-
-  console.log("not matching", complex);
-
-  // useEffect(() => {
-  //   const filteredData = getAllMerchantFromSub.filter(
-  //     (item1) => !inProcessData.some((item2) => item1.merchantId === item2.merchantId)
-  //   );
-  //   setNotMatchingData(...notMatchingData,filteredData);
-  // }, [getAllMerchantFromSub, inProcessData]);
+  useEffect(() => {
+    const onBoardedSet = new Set(onBoardedData.map(item => item.merchantID.toLowerCase()));
+    const notMatchingDataFiltered = inProcessData.filter(item => !onBoardedSet.has(item.merchantId.toLowerCase()));
+    console.log("notMatchingData", notMatchingDataFiltered);
+    setNotMatchingData(notMatchingDataFiltered);
+}, [onBoardedData, inProcessData]);
+  console.log("inprocess", inProcessData);
+  console.log("onboarderdata",onBoardedData);
   console.log("not match", notMatchingData);
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
-
-  // ... other code
 
   const handlePopoverOpen = (event, item) => {
     setAnchorEl(event.currentTarget);
@@ -148,7 +140,7 @@ const Dashboard = () => {
           justifyContent="center"
         >
           <StatBox
-            title={complex.length}
+            title={notMatchingData.length}
             subtitle="In Process"
             progress="0.2"
             // increase="+14%"
@@ -182,8 +174,8 @@ const Dashboard = () => {
           <div
             style={{
               position: "fixed",
-              top: "100px", // Adjust the top position as needed
-              right: "0", // Adjust the left position as needed
+              top: "100px", 
+              right: "0", 
               height: "350px",
               // border: "2px solid grey",
               width: "400px",
@@ -198,7 +190,6 @@ const Dashboard = () => {
                 color: "#3da58a",
                 fontSize: "26px",
                 margin: "0",
-                // backgroundColor: "white",
               }}
             >
               Admin log
@@ -319,7 +310,7 @@ const Dashboard = () => {
           >
             New Merchant
           </Typography>
-          {newMerchant.map((newItem, index) => (
+          {notMatchingData.map((newItem, index) => (
             <>
               <Box
                 display="flex"
@@ -333,7 +324,7 @@ const Dashboard = () => {
                   fontWeight="100"
                   sx={{ padding: "30px 30px 0 30px" }}
                 >
-                  {newItem.merchant}
+                  {newItem.merchantName}
                 </Typography>
                 <Box display="flex" marginTop="25px">
                   <IconButton>
