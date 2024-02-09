@@ -29,17 +29,29 @@ import { SidebarContext } from "../global/SidebarContext";
 import { useContext, useState, useEffect } from "react";
 import { BASE_URL } from "../../apiConfig";
 import { Popover } from "@mui/material";
+import { Modal,TextField} from "@mui/material";
+import axios from "axios";
+
 
 const Dashboard = () => {
-  console.log(process.env.REACT_APP_BASE_URL, "d");
+  console.log(process.env.REACT_APP_BASE_URL, "d"); 
+  const storedUserId = sessionStorage.getItem("userId");
+
   const [data, setData] = useState([]);
+  const[open,setOpen]=useState(false);
   const [onBoardedData, setOnBoardedData] = useState([]);
   const [inProcessData, setInProcessData] = useState([]);
   const [getAllMerchantFromSub, setGetAllMerchantFromSub] = useState([]);
   const [notMatchingData, setNotMatchingData] = useState([]);
+  const[merchantLogs,setMerchantLogs]=useState([]);
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const { isCollapsed } = useContext(SidebarContext);
+  const[viewMoreData,setViewMoreData]=useState([]);
+  const[reviewComments,setReviewComments]=useState([]);
+  const[reviewCom,setReviewCom]=useState('');
+  
+  // const[inpro]
   const fetchData = async () => {
     try {
       const response = await fetch(`${BASE_URL}GetallMerchantFormSubmissions`);
@@ -47,10 +59,11 @@ const Dashboard = () => {
       const result = await response.json();
       if (result?.statusCode === 200) {
         setGetAllMerchantFromSub(result?.data);
-
-        setOnBoardedData(
-          result?.data?.filter((item) => item.isFinalSubmission)
-        );
+        const approvedData = result?.data.filter((item) => item.reviewComments=== "Approved");
+        const remainingData = result?.data.filter((item) => item.reviewComments!== "Approved");
+  
+        setOnBoardedData(approvedData);
+        setReviewComments(remainingData);
         setData(result?.data);
       }
     } catch (error) {
@@ -68,48 +81,105 @@ const Dashboard = () => {
       console.log("error", error);
     }
   };
-  
+  const getAllMerchantLogs=async()=>{
+    try{
+      const response=await fetch(`${BASE_URL}GetallMerchantUpdateLogs`)
+      const result=await response.json();
+      if(result?.statusCode===200){
+        setMerchantLogs(result?.data);
+      }
+
+    }catch(error){
+      console.log("error",error);
+    }
+  }
+  const openViewMore=(item)=>{
+    setOpen(true);
+    setViewMoreData([item])
+    console.log("item",viewMoreData);
+  }
   useEffect(() => {
     fetchData();
     getAllMerchant();
+    getAllMerchantLogs();
   }, []);
-  useEffect(() => {
-    const onBoardedSet = new Set(onBoardedData.map(item => item.merchantID.toLowerCase()));
-    const notMatchingDataFiltered = inProcessData.filter(item => !onBoardedSet.has(item.merchantId.toLowerCase()));
-    console.log("notMatchingData", notMatchingDataFiltered);
-    setNotMatchingData(notMatchingDataFiltered);
-}, [onBoardedData, inProcessData]);
-  console.log("inprocess", inProcessData);
-  console.log("onboarderdata",onBoardedData);
-  console.log("not match", notMatchingData);
+useEffect(() => {
+  const matchingData = [];
+  reviewComments.forEach((comment) => {
+      const matchingInProcessData = inProcessData.find((processData) => processData.merchantId=== comment.merchantID.toLowerCase());
+      if (matchingInProcessData) {
+          matchingData.push({
+              ...comment, 
+              merchantName: matchingInProcessData.merchantName
+          });
+      }
+  });
+  setNotMatchingData(matchingData);
+}, [inProcessData,onBoardedData]);
+
+  
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
+  const[app,setApp]=useState(null);
 
-  const handlePopoverOpen = (event, item) => {
+  const handlePopoverOpen = (event,item,disc) => {
     setAnchorEl(event.currentTarget);
     setSelectedItem(item);
+    setApp(disc)
+    console.log("Item",item);
   };
-
   const handlePopoverClose = () => {
     setAnchorEl(null);
     setSelectedItem(null);
   };
 
-  const handleApprove = () => {
-    // Handle approval logic here
-    console.log("Approved:", selectedItem);
+  const handleApprove = async(e) => {  
+    e.preventDefault();
+    console.log("select",selectedItem)
+    try {
+      const patchData = [
+        {
+          path: "/isFinalSubmission",
+          op: "replace",
+          value:app==="approve"?true:false,
+        }, {
+          path: "/reviewedBy",
+          op: "replace",
+          value: storedUserId,
 
-    // Close popover
+        },
+        {
+          path: "/reviewComments",
+          op: "replace",
+          value: app === "approve" ? "Approved" : reviewCom,
+
+        }
+      ];
+      const response = await axios.patch(`${BASE_URL}UpdateMerchantFormSubmissions?FormId=${selectedItem.formID}&MerchantId=${selectedItem.merchantID}`, patchData);
+      console.log("kejio", response.data.message);
+      toast.success(response.data.message, {
+        position: 'top-center'
+      });
+
+
+    } catch (error) {
+      console.log("error", error);
+    }
+
+    console.log("Approved:");
+
+
     handlePopoverClose();
   };
 
   const handleDisapprove = () => {
-    // Handle disapproval logic here
-    console.log("Disapproved:", selectedItem);
-
-    // Close popover
     handlePopoverClose();
   };
+  const handleCloseModal=()=>{
+    setOpen(false);
+  }
+  console.log("onboarder",onBoardedData)
+  console.log("inprocess",inProcessData);
 
   return (
     <Box
@@ -140,7 +210,7 @@ const Dashboard = () => {
           justifyContent="center"
         >
           <StatBox
-            title={notMatchingData.length}
+            title={reviewComments.length}
             subtitle="In Process"
             progress="0.2"
             // increase="+14%"
@@ -220,10 +290,8 @@ const Dashboard = () => {
           <div
             style={{
               position: "fixed",
-              top: "470px", // Adjust the top position as needed
-              right: "0", // Adjust the left position as needed
-              height: "350px",
-              // border: "2px solid grey",
+              top: "470px", 
+              right: "0",
               width: "400px",
               overflowY: "scroll",
             }}
@@ -243,17 +311,18 @@ const Dashboard = () => {
             </h6>
             <br />
             <br />
-            {Notifications.map((not, index) => (
+            {merchantLogs.map((item) => (
+              
               <div
                 style={{
                   display: "flex",
                   justifyContent: "space-between",
                   padding: "5px",
                 }}
-                key={index}
+                key={item.logId}
               >
-                <p>{not.user}</p>
-                <p style={{ color: "#3da58a" }}>{not.date}</p>
+                <p>{item.merchantId}</p>
+                <p  onClick ={()=>openViewMore(item)} style={{ color: "#3da58a" ,cursor:'pointer' }}>view More</p>
               </div>
             ))}
           </div>
@@ -342,7 +411,7 @@ const Dashboard = () => {
                       marginRight: "10px",
                       color: colors.greenAccent[500],
                     }}
-                    onClick={(e) => handlePopoverOpen(e, newItem)}
+                    onClick={(e) => handlePopoverOpen(e,newItem,"approve")}
                   >
                     approve
                   </Button>
@@ -353,7 +422,7 @@ const Dashboard = () => {
                       marginRight: "10px",
                       color: colors.greenAccent[500],
                     }}
-                    onClick={(e) => handlePopoverOpen(e, newItem)}
+                    onClick={(e) => handlePopoverOpen(e, newItem,"disapprove")}
                   >
                     disapprove
                   </Button>
@@ -397,18 +466,19 @@ const Dashboard = () => {
       >
         <Box p={2} style={{ textAlign: "center" }}>
           <Typography>
-            Are you sure you want to{" "}
-            {selectedItem ? `approve ${selectedItem.merchant}` : ""}?
+            Are you sure  do you want to{" "}
+            {selectedItem ? `${app} ${selectedItem.merchantName}`: ""}?
           </Typography>
-          <textarea placeholder="Reason for disapprove" required />
+          {app=="disapprove" && <textarea placeholder="Reason for disapprove" required  onChange={(e)=>setReviewCom(e.target.value)}/>}
+          
           <br />
           <Button
             size="small"
             variant="contained"
-            onClick={handleApprove}
+            onClick={(e)=>handleApprove(e)}
             color="success"
           >
-            Approve
+            {app=="disapprove"?"Disapprove":"Approve"}
           </Button>
           &nbsp;
           <Button
@@ -421,6 +491,70 @@ const Dashboard = () => {
           </Button>
         </Box>
       </Popover>
+
+      <Modal
+  open={open}
+  onClose={handleCloseModal}
+  aria-labelledby="edit-modal-title"
+  aria-describedby="edit-modal-description"
+>
+  <Box
+    sx={{
+      position: "absolute",
+      width: 400,
+      bgcolor: "background.paper",
+      boxShadow: 24,
+      p: 4,
+      top: "50%",
+      left: "50%",
+      transform: "translate(-50%, -50%)",
+    }}
+  >
+    <TextField
+      label="logId"
+      name="logId"
+      fullWidth
+      value={viewMoreData[0]?.logId}
+      margin="normal"
+    />
+    <TextField
+      label="MerchantId"
+      name="merchantId"
+      fullWidth
+      value={viewMoreData[0]?.merchantId}
+
+      margin="normal"
+    />
+    <TextField
+      label="new Value"
+     name="newValue"
+     value={viewMoreData[0]?.newValue}
+
+      fullWidth
+      margin="normal"
+    />
+    <TextField
+      label="old Value"
+      name="oldValue"
+      value={viewMoreData[0]?.oldValue}
+
+      fullWidth
+      margin="normal"
+    />
+    <TextField
+      label="update Field"
+      // disabled
+    
+      name="updateField"
+      value={viewMoreData[0]?.updateField}
+
+      fullWidth
+      margin="normal"
+    />
+
+  </Box>
+</Modal>
+
     </Box>
   );
 };

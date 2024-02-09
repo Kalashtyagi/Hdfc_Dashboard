@@ -16,7 +16,9 @@ import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { SidebarContext } from "../global/SidebarContext";
 import { useContext } from "react";
 import Header from "../../components/Header";
-
+import axios from "axios";
+import { BASE_URL } from "../../apiConfig";
+import { ToastContainer, toast } from "react-toastify";
 function getStyles(name, personName, theme) {
   return {
     fontWeight:
@@ -75,6 +77,35 @@ const Bulkupload = () => {
     const file = event.target.files[0];
     setSelectedFile(file);
   };
+  const handleUpload = async (e) => {
+    e.preventDefault();
+    console.log("file", selectedFile);
+    const formData = new FormData();
+
+    try {
+      formData.append("file", selectedFile)
+
+      const response = await axios.post(`${BASE_URL}BulkUploadMerchan`,formData, {
+        headers: {
+          "Content-Type": "multipart/form-data"
+        }
+      }
+      )
+      console.log("response", response);
+      const result = await response.data;
+      if (result?.statusCode === 200) {
+        toast.success(result.message)
+        setSelectedFile('');
+      }
+
+    } catch (error) {
+      toast.error("something went wrong plz try again");
+      setSelectedFile('');
+
+      console.log("error", error);
+    }
+
+  }
 
   const handleChange = (event) => {
     const {
@@ -171,7 +202,15 @@ const Bulkupload = () => {
             </p>
           </Grid>
         </Grid>
+        <Button
+          variant="contained"
+          color="success"
+          onClick={handleUpload}
+        >
+          Upload
+        </Button>
       </Box>
+      <ToastContainer position="top-center" />
     </div>
   );
 };

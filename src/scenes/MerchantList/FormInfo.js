@@ -24,6 +24,8 @@ const FormInfo = () => {
   const[data,setData]=useState([]);
   const colors = tokens(theme.palette.mode);
   const { isCollapsed } = useContext(SidebarContext);
+  const storedUserId = sessionStorage.getItem("userId");
+
 
  
   // const downloadPdf = async (id) => {
@@ -110,28 +112,7 @@ const FormInfo = () => {
       headerName:'Is Active',
       flex:1
     },
-    // {
-    //   field: "action",
-    //   headerName: "Action",
-    //   flex: 2,
-    //   renderCell: (params) => (
-    //     <div style={{cursor:'pointer'}} >
-    //     <Button size="small" variant="contained" color="success" >
-    //         Edit
-    //       </Button>
-    //     </div>
-    //   ),
-    // },
-    // {
-    //   field: "action",
-    //   headerName: "Action",
-    //   flex: 2,
-    //   renderCell: (params) => (
-    //     <div style={{cursor:'pointer'}} >
-    //           <DownloadIcon  onClick={()=>downloadPdf(params.row?.formId)} />
-    //     </div>
-    //   ),
-    // },
+    
   
   ];
   const fetchData=async()=>{
