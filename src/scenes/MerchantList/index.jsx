@@ -1,5 +1,5 @@
 
-import { Box,Button,Modal,TextField} from "@mui/material";
+import { Box,Button,Modal,TextField,Grid,InputLabel,Select,MenuItem,FormControl} from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
 import { mockDataContacts } from "../../data/mockData";
@@ -12,7 +12,10 @@ import { v4 as uuidv4 } from 'uuid';
 import { BASE_URL } from "../../apiConfig";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
-
+import EmailIcon from '@mui/icons-material/Email';
+import { EmailSharp } from "@mui/icons-material";
+import EditModal from "../../components/Modal/EditModal";
+import SendEmailModal from "../../components/Modal/SendEmailModal";
 const  Contacts = () => { 
   const[data,setData]=useState([]);
   const theme = useTheme();
@@ -20,15 +23,30 @@ const  Contacts = () => {
   const [selectedRow, setSelectedRow] = useState(null);
   const { isCollapsed } = useContext(SidebarContext);
   const [editModalOpen, setEditModalOpen] = useState(false);
-  
-  
+  const [emailModalOpen, setEmailModalOpen] = useState(false);
+  const[formId,setFormId]=useState([]); 
+  const[emailRow,setEmailRow]=useState(null);
+
+  const[emailData,setEmailData]=useState({
+    name:'',
+    email:'',
+    merchantId:'',
+    formId:''
+  })
   const[editData,setEditData]=useState({
     name:'',
     address:'',
     phone:'',
     email:'',
-    merchantId:'',
   })
+  const handleEmailIconClick = (row) => {   
+    setEmailRow(row);
+    setEmailModalOpen(true);
+  };
+  const handleCloseEmailModal = () => {
+    setEmailModalOpen(false);
+  };
+
 
   const columns = [
     { 
@@ -56,7 +74,7 @@ const  Contacts = () => {
     {
       field: "address",
       headerName: "Address",
-      flex: 4,
+      flex: 2,
     },
     {
       field: "merchantType",
@@ -82,17 +100,23 @@ const  Contacts = () => {
         </div>
       ),
     },
+    {
+      field: "sendEmail",
+      headerName: "Sent Email",
+      flex: 2,
+      renderCell: (params) => (
+        <div style={{cursor:'pointer',textAlign:'center'}}  onClick={() => handleEmailIconClick(params.row)} >
+          <Button size="small" variant="contained" color="primary" >
+          <EmailIcon/>
+          </Button>
+           
+        </div>
+      ),
+    },
    
   ]; 
   const handleEdit = (row) => {
-    setSelectedRow(row);
-    setEditData({
-      name: row?.merchantName || '',
-      address: row?.address || '',
-      phone: row?.phone || '',
-      email: row?.email || '',
-      merchantId: row?.merchantId || '',
-  });
+    setSelectedRow(row); 
     setEditModalOpen(true);
   };
 
@@ -116,57 +140,18 @@ const  Contacts = () => {
     fetchData();
   },[])
  
-     const handleEditSubmit = async (email) => {
-        try {
-            const patchData = [
-                {
-                    // operationType: 0,
-                    path: "/merchantName",
-                    op: "replace",
-                    from: "string",
-                    value:`${editData?.name}`,
-                },
-                {
-                  // operationType: 0,
-                  path: "/email",
-                  op: "replace",
-                  from: "string",
-                  value:`${editData?.email}`, 
-                },
-                {
-                // operationType: 0,
-                    path: "/phone",
-                    op: "replace",
-                    from: "string",
-                    value:`${editData?.phone}`,
-                },
-                {
-                  // operationType: 0,
-                      path: "/address",
-                      op: "replace",
-                      from: "string",
-                      value:`${editData.address}`,
-                  },
-               
-                
-            ];
-    
-            const response = await axios.patch(
-                `${BASE_URL}PatchMerchant`,
-                patchData,{
-                  params:{
-                    Email:email
-                  },
-                }
-            );
-            console.log(response.data); 
-            toast.success(response.data.message)
-        } catch (error) {
-            console.error("Error editing merchant:", error);
-        }
-        setEditModalOpen(false);
-    };
+   
 
+    const getAllFormId=async()=>{
+      try{
+        const response=await fetch(`${BASE_URL}GetAllFormData`)
+        const result=await response.json();
+        setFormId(result.data);
+        console.log("result",result.data);
+      }catch(error){
+        console.log("error",error);
+      }
+    } 
     
   return (
     <Box
@@ -216,79 +201,8 @@ const  Contacts = () => {
           components={{ Toolbar: GridToolbar }}
         />
       </Box>
-     
-      
-      <Modal
-  open={editModalOpen}
-  onClose={handleCloseModal}
-  aria-labelledby="edit-modal-title"
-  aria-describedby="edit-modal-description"
->
-  <Box
-    sx={{
-      position: "absolute",
-      width: 400,
-      bgcolor: "background.paper",
-      boxShadow: 24,
-      p: 4,
-      top: "50%",
-      left: "50%",
-      transform: "translate(-50%, -50%)",
-    }}
-  >
-    <TextField
-      label="Name"
-      value={editData?.name}
-      name="name"
-      onChange={(e) =>setEditData({...editData,[e.target.name]:[e.target.value]})}
-      fullWidth
-      margin="normal"
-    />
-    <TextField
-      label="Email"
-      name="email"
-      value={editData?.email}
-  onChange={(e) => setEditData({ ...editData, [e.target.name]: e.target.value })}
-      fullWidth
-      margin="normal"
-    />
-    <TextField
-      label="Phone Number"
-     name="phone"
-      value={editData?.phone}
-      onChange={(e) =>setEditData({...editData,[e.target.name]:[e.target.value]})}
-      fullWidth
-      margin="normal"
-    />
-    <TextField
-      label="Address"
-      value={editData?.address}
-      name="address"
-      onChange={(e) =>setEditData({...editData,[e.target.name]:[e.target.value]})}
-      fullWidth
-      margin="normal"
-    />
-   
-    <Box sx={{ display: "flex", justifyContent: "flex-end", marginTop: 2 }}>
-      <Button
-        variant="contained"
-        color="success"
-
-        onClick={()=> handleEditSubmit(editData.email)}
-      >
-        Edit
-      </Button>
-      <Button
-        variant="contained"
-        color="error"
-        style={{ marginLeft: 8 }}
-        onClick={handleCloseModal}
-      >
-        Cancel
-      </Button>
-    </Box>
-  </Box>
-</Modal>
+       <EditModal  selectedItem={selectedRow} editModalOpen={editModalOpen} setEditModalOpen={setEditModalOpen} handleCloseModal={handleCloseModal}/>
+       <SendEmailModal rowData={emailRow} emailModalOpen={emailModalOpen} handleCloseEmailModal={handleCloseEmailModal} setEmailModalOpen={setEditModalOpen}/>
     </Box>
   );
 };

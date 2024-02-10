@@ -201,14 +201,15 @@ const Bulkupload = () => {
               {selectedFile ? selectedFile.name : "No file selected"}
             </p>
           </Grid>
-        </Grid>
-        <Button
+          <Button
           variant="contained"
           color="success"
           onClick={handleUpload}
         >
           Upload
         </Button>
+        </Grid>
+       
       </Box>
       <ToastContainer position="top-center" />
     </div>

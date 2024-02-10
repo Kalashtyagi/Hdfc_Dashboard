@@ -233,10 +233,10 @@ const MerchantForm = () => {
       const result = await response.json();
       const rowsWithIds = result?.data.map((row) => ({ ...row, id: uuidv4() }));
       setData(rowsWithIds);
-      setLoading(false); // Set loading to false when data is fetched
+      setLoading(false);
     } catch (error) {
       console.log(error);
-      setLoading(false); // Set loading to false when data is fetched
+      setLoading(false);
     }
   };
   useEffect(() => {
