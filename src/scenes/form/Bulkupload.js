@@ -19,6 +19,7 @@ import Header from "../../components/Header";
 import axios from "axios";
 import { BASE_URL } from "../../apiConfig";
 import { ToastContainer, toast } from "react-toastify";
+import { DarkContext } from "../global/DarkBar";
 function getStyles(name, personName, theme) {
   return {
     fontWeight:
@@ -61,6 +62,8 @@ const hardcodedOptions = [
 ];
 
 const Bulkupload = () => {
+  const { isDark } = useContext(DarkContext);
+
   const theme = useTheme();
   const [personName, setPersonName] = React.useState([]);
   const [dropdownData, setDropdownData] = useState([]);
@@ -154,9 +157,13 @@ const Bulkupload = () => {
                 id="demo-multiple-name"
                 value={personName}
                 onChange={handleChange}
-                // input={<OutlinedInput label="Select Type" />}
                 input={<CustomOutlinedInput label="User Type" />}
                 MenuProps={MenuProps}
+                InputLabelProps={{
+                  style: {
+                    color: isDark ? "white" : "black",
+                  },
+                }}
               >
                 {hardcodedOptions.map((item) => (
                   <MenuItem
@@ -168,7 +175,7 @@ const Bulkupload = () => {
                     {item.name}
                   </MenuItem>
                 ))}
-                {dropdownData.map((item) => (
+                {/* {dropdownData.map((item) => (
                   <MenuItem
                     key={item.id}
                     value={item.name}
@@ -177,7 +184,7 @@ const Bulkupload = () => {
                   >
                     {item.name}
                   </MenuItem>
-                ))}
+                ))} */}
               </Select>
             </FormControl>
           </Grid>
@@ -201,14 +208,14 @@ const Bulkupload = () => {
               {selectedFile ? selectedFile.name : "No file selected"}
             </p>
           </Grid>
-          <Button
+        </Grid>
+        <Button
           variant="contained"
           color="success"
           onClick={handleUpload}
         >
           Upload
         </Button>
-        </Grid>
        
       </Box>
       <ToastContainer position="top-center" />

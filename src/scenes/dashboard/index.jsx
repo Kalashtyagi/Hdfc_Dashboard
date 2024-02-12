@@ -31,12 +31,14 @@ import { BASE_URL } from "../../apiConfig";
 import { Popover } from "@mui/material";
 import { Modal,TextField} from "@mui/material";
 import axios from "axios";
+import { ToastContainer } from "react-toastify";
+import { DarkContext } from "../global/DarkBar";
+
 
 
 const Dashboard = () => {
   console.log(process.env.REACT_APP_BASE_URL, "d"); 
   const storedUserId = sessionStorage.getItem("userId");
-
   const [data, setData] = useState([]);
   const[open,setOpen]=useState(false);
   const [onBoardedData, setOnBoardedData] = useState([]);
@@ -45,11 +47,14 @@ const Dashboard = () => {
   const [notMatchingData, setNotMatchingData] = useState([]);
   const[merchantLogs,setMerchantLogs]=useState([]);
   const theme = useTheme();
+  const { isDark } = useContext(DarkContext);
+
   const colors = tokens(theme.palette.mode);
   const { isCollapsed } = useContext(SidebarContext);
   const[viewMoreData,setViewMoreData]=useState([]);
   const[reviewComments,setReviewComments]=useState([]);
   const[reviewCom,setReviewCom]=useState('');
+  const[allAdminLogs,setAllAdminLogs]=useState([]);
   
   // const[inpro]
   const fetchData = async () => {
@@ -96,7 +101,8 @@ const Dashboard = () => {
   const openViewMore=(item)=>{
     setOpen(true);
     setViewMoreData([item])
-    console.log("item",viewMoreData);
+    
+    console.log("item",item);
   }
   useEffect(() => {
     fetchData();
@@ -116,8 +122,6 @@ useEffect(() => {
   });
   setNotMatchingData(matchingData);
 }, [inProcessData,onBoardedData]);
-
-  
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
   const[app,setApp]=useState(null);
@@ -178,9 +182,54 @@ useEffect(() => {
   const handleCloseModal=()=>{
     setOpen(false);
   }
-  console.log("onboarder",onBoardedData)
-  console.log("inprocess",inProcessData);
+  
+  const downloadPdf = async (row) => { 
+    console.log("ow",row);
+    try {
+      const response = await axios.get(
+        `${BASE_URL}DownloadPDF?FormId=${row.formID}&MerchantId=${row.merchantID}`
+      );
 
+      console.log('response 75', response.data);
+
+      const jsonData = JSON.stringify(response.data, null, 2);
+      console.log('83', jsonData);
+
+      if (
+        response.statusCode === 200 &&
+        response.data &&
+        response.data.fileUrl
+      ) {
+        const fileUrl = response.data.fileUrl;
+
+        const link = document.createElement('a');
+        link.href = fileUrl;
+        link.download = response.data.name || 'download.xlsx';
+        document.body.appendChild(link);
+        link.click();
+
+        document.body.removeChild(link);
+      } else {
+        console.error('File URL not found in the response');
+      }
+    } catch (error) {
+      console.error('Error downloading file:', error);
+    }
+
+  }
+const adminLogs=async()=>{
+  try{
+    const response=await fetch(`${BASE_URL}GetAllAdminUpdateLogs`)
+    const result=await response.json();
+    setAllAdminLogs(result.data);
+  }catch(error){
+    console.log("error",error);
+  }
+}
+useEffect(()=>{
+adminLogs();
+},[])
+console.log("adminlogs",allAdminLogs);
   return (
     <Box
       m="20px"
@@ -247,7 +296,6 @@ useEffect(() => {
               top: "100px", 
               right: "0", 
               height: "350px",
-              // border: "2px solid grey",
               width: "400px",
               overflowY: "scroll",
             }}
@@ -267,49 +315,50 @@ useEffect(() => {
             <br />
             <br />
             <div>
-              {Notifications.map((not, index) => (
+              {allAdminLogs.map((item, index) => (
                 <div
                   style={{
                     display: "flex",
                     justifyContent: "space-between",
                     padding: "5px",
                   }}
-                  key={index}
+                  key={item.adminId}
                 >
                   <div>
-                    <p>{not.user}</p>
-                    <p style={{ color: "#3da58a" }}>{not.txId}</p>
+                    <p>{item.adminId}</p>
+                    {/* <p style={{ color: "#3da58a" }}>{not.txId}</p> */}
                   </div>
 
-                  <p>{not.date}</p>
+                  <p style={{ color: "#3da58a",cursor:'pointer' }} onClick ={()=>openViewMore(item)}>view More</p>
                 </div>
               ))}
             </div>
           </div>
+          
 
           <div
             style={{
+              
               position: "fixed",
               top: "470px", 
               right: "0",
               width: "400px",
-              overflowY: "scroll",
+              maxHeight: "250px", 
+              overflowY: "auto",
             }}
           >
             <h6
               style={{
+               
+
                 textAlign: "center",
                 color: "#3da58a",
                 fontSize: "26px",
                 margin: "0",
-                right: "140px",
-                position: "fixed",
-                // backgroundColor: "white",
               }}
             >
               Merchant log
             </h6>
-            <br />
             <br />
             {merchantLogs.map((item) => (
               
@@ -402,6 +451,7 @@ useEffect(() => {
                         fontSize: "26px",
                         color: colors.greenAccent[500],
                       }}
+                      onClick={()=>downloadPdf(newItem)}
                     />
                   </IconButton>
                   <Button
@@ -447,7 +497,7 @@ useEffect(() => {
             mt="25px"
             justifyContent="space-between"
           >
-            <PieActiveArc size="175" />
+            <PieActiveArc sise="175" />
           </Box>
         </Box>
       </Box>
@@ -515,16 +565,27 @@ useEffect(() => {
       name="logId"
       fullWidth
       value={viewMoreData[0]?.logId}
-      margin="normal"
-    />
-    <TextField
-      label="MerchantId"
-      name="merchantId"
-      fullWidth
-      value={viewMoreData[0]?.merchantId}
+      InputLabelProps={{
+        style: {
+          color: isDark ? "black" : "white",
+        },
+      }}
 
       margin="normal"
     />
+    <TextField
+  label={viewMoreData[0]?.merchantId ? "MerchantID" : "AdminID"}
+  name={viewMoreData[0]?.merchantId?"merchantId":"adminId"}
+  fullWidth
+  value={viewMoreData[0]?.merchantId || viewMoreData[0]?.adminId}
+  margin="normal"
+  InputLabelProps={{
+    style: {
+      color: isDark ? "black" : "white",
+    },
+  }}
+
+/>
     <TextField
       label="new Value"
      name="newValue"
@@ -532,11 +593,22 @@ useEffect(() => {
 
       fullWidth
       margin="normal"
+      InputLabelProps={{
+        style: {
+          color: isDark ? "black" : "white",
+        },
+      }}
+
     />
     <TextField
       label="old Value"
       name="oldValue"
       value={viewMoreData[0]?.oldValue}
+      InputLabelProps={{
+        style: {
+          color: isDark ? "black" : "white",
+        },
+      }}
 
       fullWidth
       margin="normal"
@@ -546,7 +618,12 @@ useEffect(() => {
       // disabled
     
       name="updateField"
-      value={viewMoreData[0]?.updateField}
+      value={viewMoreData[0]?.updatedField || viewMoreData[0]?.updateField}
+      InputLabelProps={{
+        style: {
+          color: isDark ? "black" : "white",
+        },
+      }}
 
       fullWidth
       margin="normal"
@@ -554,7 +631,6 @@ useEffect(() => {
 
   </Box>
 </Modal>
-
     </Box>
   );
 };

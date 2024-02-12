@@ -49,11 +49,7 @@ export default function PieActiveArc() {
     setFrequencyMap(newFrequencyMap);
   }, [pieData]);
 
-  // console.log("piedtaa", pieData);
-  // console.log("data", filterData);
-  // console.log("frequencyMap", frequencyMap);
-
-  // Convert frequencyMap to PieChart data format
+ 
   const pieChartData = Array.from(frequencyMap).map(([label, value]) => ({
     label,
     value,

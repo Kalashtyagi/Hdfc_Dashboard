@@ -68,7 +68,7 @@ const MerchantForm = () => {
         }
       ];
       const response = await axios.patch(`${BASE_URL}UpdateMerchantFormSubmissions?FormId=${rowData.formID}&MerchantId=${rowData.merchantID}`, patchData);
-      console.log("kejio", response.data.message);
+      console.log("reponse", response.data.message);
       toast.success(response.data.message, {
         position: 'top-center'
       });

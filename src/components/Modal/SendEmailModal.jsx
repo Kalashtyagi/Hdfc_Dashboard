@@ -1,9 +1,11 @@
 import { Box, Button, Modal, TextField,Grid ,FormControl,InputLabel,Select,MenuItem} from "@mui/material";
-import { useEffect, useState } from "react";
+import { useEffect, useState,useContext } from "react";
 import { BASE_URL } from "../../apiConfig";
 import axios from "axios";
 import { ToastClassName,toast } from "react-toastify"
+import { DarkContext } from "../../scenes/global/DarkBar";
 function SendEmailModal({rowData,emailModalOpen,setEmailModalOpen,handleCloseEmailModal}){   
+  const { isDark } = useContext(DarkContext); 
      const[formId,setFormId]=useState([]);
      const[emailData,setEmailData]=useState({
         name:'',
@@ -66,6 +68,12 @@ function SendEmailModal({rowData,emailModalOpen,setEmailModalOpen,handleCloseEma
                 value={emailData.name}
                 fullWidth
                 margin="normal"
+                InputLabelProps={{
+                  style: {
+                    color: isDark ? "black" : "white",
+                  },
+                }}
+    
               />
             </Grid>
             <Grid item xs={6}>
@@ -74,22 +82,37 @@ function SendEmailModal({rowData,emailModalOpen,setEmailModalOpen,handleCloseEma
                 value={emailData.email}
                 fullWidth
                 margin="normal"
+                InputLabelProps={{
+                  style: {
+                    color: isDark ? "black" : "white",
+                  },
+                }}
+    
               />
             </Grid>
           </Grid>
           <TextField
             label="Merchant ID"
             value={emailData.merchantId}
+            InputLabelProps={{
+              style: {
+                color: isDark ? "black" : "white",
+              },
+            }}
+
             
             fullWidth
             margin="normal"
           />
             <FormControl variant="outlined" fullWidth>
-            <InputLabel id="form-id-label">FormId</InputLabel>
+            <InputLabel id="form-id-label"style={{ color: isDark ? "black" : "white" }}
+>FormId</InputLabel>
           <Select
             
             type="select"
             label="FormId"
+           
+
             
             value={emailData.formId}
             onChange={(e) => setEmailData({ ...emailData, formId: e.target.value })}

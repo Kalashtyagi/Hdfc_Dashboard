@@ -2,7 +2,9 @@ import { Box, Button, Modal, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
 import { BASE_URL } from "../../apiConfig";
 import axios from "axios";
+import { useContext } from "react";
 import { ToastClassName,toast } from "react-toastify"
+import { DarkContext } from "../../scenes/global/DarkBar";
 
 function EditModal({ selectedItem, editModalOpen, setEditModalOpen, handleCloseModal }) {
   const [editData, setEditData] = useState({
@@ -11,7 +13,7 @@ function EditModal({ selectedItem, editModalOpen, setEditModalOpen, handleCloseM
     phone:"",
     email:"",
   });
-
+  const { isDark } = useContext(DarkContext);
   useEffect(()=>{
     setEditData({ 
          name:selectedItem?.merchantName,
@@ -109,6 +111,12 @@ const getAllFormId=async()=>{
           onChange={(e) => setEditData({ ...editData, [e.target.name]: e.target.value })}
           fullWidth
           margin="normal"
+          InputLabelProps={{
+            style: {
+              color: isDark ? "black" : "white",
+            },
+          }}
+
         />
         <TextField
           label="Email"
@@ -116,6 +124,12 @@ const getAllFormId=async()=>{
           value={editData.email}
           onChange={(e) => setEditData({ ...editData, [e.target.name]: e.target.value })}
           fullWidth
+          InputLabelProps={{
+            style: {
+              color: isDark ? "black" : "white",
+            },
+          }}
+
           margin="normal"
         />
         <TextField
@@ -125,6 +139,12 @@ const getAllFormId=async()=>{
           onChange={(e) => setEditData({ ...editData, [e.target.name]: e.target.value })}
           fullWidth
           margin="normal"
+          InputLabelProps={{
+            style: {
+              color: isDark ? "black" : "white",
+            },
+          }}
+
         />
         <TextField
           label="Address"
@@ -133,6 +153,12 @@ const getAllFormId=async()=>{
           onChange={(e) => setEditData({ ...editData, [e.target.name]: e.target.value })}
           fullWidth
           margin="normal"
+          InputLabelProps={{
+            style: {
+              color: isDark ? "black" : "white",
+            },
+          }}
+
         />
 
         <Box sx={{ display: "flex", justifyContent: "flex-end", marginTop: 2 }}>
