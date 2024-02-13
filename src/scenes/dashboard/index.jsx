@@ -315,7 +315,7 @@ console.log("adminlogs",allAdminLogs);
             <br />
             <br />
             <div>
-              {allAdminLogs.map((item, index) => (
+              { allAdminLogs && allAdminLogs.map((item, index) => (
                 <div
                   style={{
                     display: "flex",

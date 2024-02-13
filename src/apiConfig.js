@@ -1,2 +1,2 @@
-const BASE_URL = "http://192.168.1.199:8181/api/";
+const BASE_URL = "http://hdfcbackend-dev.eba-2dfdccz5.us-east-1.elasticbeanstalk.com/api/";
 export { BASE_URL };

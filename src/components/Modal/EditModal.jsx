@@ -67,24 +67,25 @@ function EditModal({ selectedItem, editModalOpen, setEditModalOpen, handleCloseM
               },
             }
         );
-        console.log(response.data.message); 
-        toast.success(response.data.message)
+        const result=await response.data;
+        console.log(result.message); 
+        toast.success(result.message)
     } catch (error) {
         console.error("Error editing merchant:", error);
     }
     setEditModalOpen(false);
 };
 
-const getAllFormId=async()=>{
-  try{
-    const response=await fetch(`${BASE_URL}GetAllFormData`)
-    const result=await response.json();
-    setFormId(result.data);
-    console.log("result",result.data);
-  }catch(error){
-    console.log("error",error);
-  }
-} 
+// const getAllFormId=async()=>{
+//   try{
+//     const response=await fetch(`${BASE_URL}GetAllFormData`)
+//     const result=await response.json();
+//     setFormId(result.data);
+//     console.log("result",result.data);
+//   }catch(error){
+//     console.log("error",error);
+//   }
+// } 
   return (
     <Modal
       open={editModalOpen}
