@@ -46,6 +46,15 @@ const Dashboard = () => {
   const [getAllMerchantFromSub, setGetAllMerchantFromSub] = useState([]);
   const [notMatchingData, setNotMatchingData] = useState([]);
   const[merchantLogs,setMerchantLogs]=useState([]);
+  const [value, setValue] = useState('inprocess');
+  const handleChange1 = (event) => {
+    setValue(event.target.value);
+  };
+
+
+  const handleChange = (event) => {
+    setValue(event.target.value);
+  };
   const theme = useTheme();
   const { isDark } = useContext(DarkContext);
 
@@ -303,11 +312,13 @@ console.log("adminlogs",allAdminLogs);
             <h6
               style={{
                 textAlign: "center",
-                position: "fixed",
-                right: "140px",
                 color: "#3da58a",
                 fontSize: "26px",
                 margin: "0",
+                position: 'sticky', 
+                top: 0,              
+                backgroundColor: "#141b2d", 
+                zIndex: 1,
               }}
             >
               Admin log
@@ -345,18 +356,21 @@ console.log("adminlogs",allAdminLogs);
               width: "400px",
               maxHeight: "250px", 
               overflowY: "auto",
+
             }}
           >
             <h6
-              style={{
-               
-
-                textAlign: "center",
-                color: "#3da58a",
-                fontSize: "26px",
-                margin: "0",
-              }}
-            >
+    style={{
+      textAlign: "center",
+      color: "#3da58a",
+      fontSize: "26px",
+      margin: "0",
+      position: 'sticky', 
+      top: 0,              
+      backgroundColor: "#141b2d", 
+      zIndex: 1,          
+    }}
+  >
               Merchant log
             </h6>
             <br />
@@ -394,6 +408,8 @@ console.log("adminlogs",allAdminLogs);
                 row
                 aria-labelledby="demo-row-radio-buttons-group-label"
                 name="row-radio-buttons-group"
+                value={value}
+                onChange={handleChange1}
               >
                 <FormControlLabel
                   value="inprocess"
@@ -402,8 +418,9 @@ console.log("adminlogs",allAdminLogs);
                 />
                 <FormControlLabel
                   value="onBoarded"
-                  control={<Radio />}
+                  control={<Radio/>}
                   label="On Boarded"
+                  
                 />
               </RadioGroup>
             </FormControl>

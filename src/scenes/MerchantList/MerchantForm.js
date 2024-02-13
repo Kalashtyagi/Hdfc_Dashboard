@@ -99,26 +99,26 @@ const MerchantForm = () => {
 
       console.log('response 75', response.data);
 
-      const jsonData = JSON.stringify(response.data, null, 2);
-      console.log('83', jsonData);
+      // const jsonData = JSON.stringify(response.data, null, 2);
+      // console.log('83', jsonData);
 
-      if (
-        response.statusCode === 200 &&
-        response.data &&
-        response.data.fileUrl
-      ) {
-        const fileUrl = response.data.fileUrl;
+      // if (
+      //   response.statusCode === 200 &&
+      //   response.data &&
+      //   response.data.fileUrl
+      // ) {
+      //   const fileUrl = response.data.fileUrl;
 
-        const link = document.createElement('a');
-        link.href = fileUrl;
-        link.download = response.data.name || 'download.xlsx';
-        document.body.appendChild(link);
-        link.click();
+      //   const link = document.createElement('a');
+      //   link.href = fileUrl;
+      //   link.download = response.data.name || 'download.xlsx';
+      //   document.body.appendChild(link);
+      //   link.click();
 
-        document.body.removeChild(link);
-      } else {
-        console.error('File URL not found in the response');
-      }
+      //   document.body.removeChild(link);
+      // } else {
+      //   console.error('File URL not found in the response');
+      // }
     } catch (error) {
       console.error('Error downloading file:', error);
     }
