@@ -17,9 +17,7 @@ function SendEmailModal({rowData,emailModalOpen,setEmailModalOpen,handleCloseEma
         setEmailData({ 
              name:rowData?.merchantName,
              email:rowData?.email,
-             merchantId:rowData?.merchantId,
-            //  formId:rowData?.email
-    
+             merchantId:rowData?.merchantId,    
         })
     
       },[rowData])

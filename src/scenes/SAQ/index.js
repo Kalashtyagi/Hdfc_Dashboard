@@ -202,8 +202,11 @@ const onSubmit = async (data) => {
             InputLabelProps={{
               style: {
                 color: isDark ? "black" : "white",
+                shrink: true,
+
               },
             }}
+            
            
             {...register("totalParts", {
               required: "Total parts is required",
