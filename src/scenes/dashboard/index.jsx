@@ -33,12 +33,14 @@ import { Modal,TextField} from "@mui/material";
 import axios from "axios";
 import { ToastContainer } from "react-toastify";
 import { DarkContext } from "../global/DarkBar";
+import { useNavigate } from "react-router-dom";
 
 
+const Dashboard = () => { 
+  const navigate=useNavigate();
 
-const Dashboard = () => {
-  console.log(process.env.REACT_APP_BASE_URL, "d"); 
   const storedUserId = sessionStorage.getItem("userId");
+ 
   const [data, setData] = useState([]);
   const[open,setOpen]=useState(false);
   const [onBoardedData, setOnBoardedData] = useState([]);
@@ -337,7 +339,6 @@ console.log("adminlogs",allAdminLogs);
                 >
                   <div>
                     <p>{item.adminId}</p>
-                    {/* <p style={{ color: "#3da58a" }}>{not.txId}</p> */}
                   </div>
 
                   <p style={{ color: "#3da58a",cursor:'pointer' }} onClick ={()=>openViewMore(item)}>view More</p>

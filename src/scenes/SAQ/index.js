@@ -45,12 +45,21 @@ const validateTotalParts=(value)=>{
   if(value<0){
     return 'Total part can not be negative'
   }
-  if (value > 99) {
-    return 'Total parts should be below 100';
+ else if(value>10){
+    return 'number must be less than or equal to 10'
   }
+ else{
   return true
 
+ }
+
 }
+// const countt=(value)=>{
+//   if(value>99){
+//     return 'Total parts should be below 100';
+//   }
+//   return true
+// }
 
 const onSubmit = async (data) => {
   const fileInput = document.querySelector('input[name="FormTemplate"]');
@@ -186,7 +195,7 @@ const onSubmit = async (data) => {
           <TextField
             fullWidth
             variant="filled"
-            type="number"
+            type="Number"
             label="Total Parts"
             name="totalParts"
             sx={{ gridColumn: "span 2" }}
@@ -195,10 +204,13 @@ const onSubmit = async (data) => {
                 color: isDark ? "black" : "white",
               },
             }}
+           
             {...register("totalParts", {
               required: "Total parts is required",
-              maxLength: 2,              
-              validate:validateTotalParts
+              
+              // maxLength: 2,  
+              inputMode: "numeric",            
+              validate:validateTotalParts,
             })}
             error={Boolean(errors.totalParts)}
             helperText={

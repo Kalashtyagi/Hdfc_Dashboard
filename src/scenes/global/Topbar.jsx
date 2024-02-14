@@ -16,22 +16,13 @@ const Topbar = () => {
   const { isDark, SetIsDark } = useContext(DarkContext);
 
   const handleIconClick = () => {
-    colorMode.toggleColorMode(); // Toggle the color mode using the ColorModeContext
-    SetIsDark(!isDark); // Toggle the isDark value using the DarkContext
+    colorMode.toggleColorMode();
+    SetIsDark(!isDark); 
   };
 
   return (
     <Box display="flex" justifyContent="flex-end" p={2}>
-      {/* SEARCH BAR */}
-      {/* <Box
-        display="flex"
-        backgroundColor={colors.primary[400]}
-        borderRadius="3px"
-      >
-        <InputBase sx={{ ml: 2, flex: 1 }} placeholder="Search" />
-      </Box> */}
-
-      {/* ICONS */}
+     
       <Box display="flex">
         <IconButton onClick={handleIconClick}>
           {isDark ? <DarkModeOutlinedIcon /> : <LightModeOutlinedIcon />}

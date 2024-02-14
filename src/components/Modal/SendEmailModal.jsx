@@ -35,7 +35,7 @@ function SendEmailModal({rowData,emailModalOpen,setEmailModalOpen,handleCloseEma
       } 
     useEffect(()=>{
           getAllFormId();
-    },[])
+    },[rowData])
     const handleSendEmail=async()=>{ 
         console.log("die",emailData)
         handleCloseEmailModal();

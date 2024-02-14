@@ -17,6 +17,7 @@ import MerchantList from "./scenes/MerchantList/index";
 import MerchantForm from "./scenes/MerchantList/MerchantForm";
 import FormInfo from "./scenes/MerchantList/FormInfo";
 import { ToastContainer } from "react-toastify";
+import ProtectedRoute from "./utils/ProtectedRoute";
 
 function App() {
   const [theme, colorMode] = useMode();
@@ -24,17 +25,11 @@ function App() {
   const navigate = useNavigate();
   const storedUserId = sessionStorage.getItem("userId");
  
- 
-  // const router=async()=>{
-  //   if(storedUserId){
-  //     navigate("/dashboard");
-  //   }else{
-  //     navigate("/");
-  //   }
-  // }
-  // useEffect(()=>{
-  //   router();
-  // },[storedUserId,navigate])
+  useEffect(()=>{
+    if(!storedUserId){
+      return  navigate("/")
+    }
+  },[storedUserId,navigate])
 
 
   const isLoginPage = window.location.pathname === "/";
@@ -52,6 +47,7 @@ function App() {
             <Topbar setIsSidebar={setIsSidebar} />
             <Routes>
               <Route path="/" element={<Login />} />
+
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/merchantList" element={<MerchantList />} />
               <Route path="/form" element={<Form />} />
