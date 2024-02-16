@@ -1,4 +1,3 @@
-
 import {
   Box,
   Button,
@@ -29,30 +28,26 @@ import { SidebarContext } from "../global/SidebarContext";
 import { useContext, useState, useEffect } from "react";
 import { BASE_URL } from "../../apiConfig";
 import { Popover } from "@mui/material";
-import { Modal,TextField} from "@mui/material";
+import { Modal, TextField } from "@mui/material";
 import axios from "axios";
-import { ToastContainer } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import { DarkContext } from "../global/DarkBar";
-import { useNavigate } from "react-router-dom";
+import "./index.css";
 
-
-const Dashboard = () => { 
-  const navigate=useNavigate();
-
+const Dashboard = () => {
+  console.log(process.env.REACT_APP_BASE_URL, "d");
   const storedUserId = sessionStorage.getItem("userId");
- 
   const [data, setData] = useState([]);
-  const[open,setOpen]=useState(false);
+  const [open, setOpen] = useState(false);
   const [onBoardedData, setOnBoardedData] = useState([]);
   const [inProcessData, setInProcessData] = useState([]);
   const [getAllMerchantFromSub, setGetAllMerchantFromSub] = useState([]);
   const [notMatchingData, setNotMatchingData] = useState([]);
-  const[merchantLogs,setMerchantLogs]=useState([]);
-  const [value, setValue] = useState('inprocess');
+  const [merchantLogs, setMerchantLogs] = useState([]);
+  const [value, setValue] = useState("inprocess");
   const handleChange1 = (event) => {
     setValue(event.target.value);
   };
-
 
   const handleChange = (event) => {
     setValue(event.target.value);
@@ -62,11 +57,11 @@ const Dashboard = () => {
 
   const colors = tokens(theme.palette.mode);
   const { isCollapsed } = useContext(SidebarContext);
-  const[viewMoreData,setViewMoreData]=useState([]);
-  const[reviewComments,setReviewComments]=useState([]);
-  const[reviewCom,setReviewCom]=useState('');
-  const[allAdminLogs,setAllAdminLogs]=useState([]);
-  
+  const [viewMoreData, setViewMoreData] = useState([]);
+  const [reviewComments, setReviewComments] = useState([]);
+  const [reviewCom, setReviewCom] = useState("");
+  const [allAdminLogs, setAllAdminLogs] = useState([]);
+
   // const[inpro]
   const fetchData = async () => {
     try {
@@ -75,9 +70,13 @@ const Dashboard = () => {
       const result = await response.json();
       if (result?.statusCode === 200) {
         setGetAllMerchantFromSub(result?.data);
-        const approvedData = result?.data.filter((item) => item.reviewComments=== "Approved");
-        const remainingData = result?.data.filter((item) => item.reviewComments!== "Approved");
-  
+        const approvedData = result?.data.filter(
+          (item) => item.reviewComments === "Approved"
+        );
+        const remainingData = result?.data.filter(
+          (item) => item.reviewComments !== "Approved"
+        );
+
         setOnBoardedData(approvedData);
         setReviewComments(remainingData);
         setData(result?.data);
@@ -97,92 +96,93 @@ const Dashboard = () => {
       console.log("error", error);
     }
   };
-  const getAllMerchantLogs=async()=>{
-    try{
-      const response=await fetch(`${BASE_URL}GetallMerchantUpdateLogs`)
-      const result=await response.json();
-      if(result?.statusCode===200){
+  const getAllMerchantLogs = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}GetallMerchantUpdateLogs`);
+      const result = await response.json();
+      if (result?.statusCode === 200) {
         setMerchantLogs(result?.data);
       }
-
-    }catch(error){
-      console.log("error",error);
+    } catch (error) {
+      console.log("error", error);
     }
-  }
-  const openViewMore=(item)=>{
+  };
+  const openViewMore = (item) => {
     setOpen(true);
-    setViewMoreData([item])
-    
-    console.log("item",item);
-  }
+    setViewMoreData([item]);
+
+    console.log("item", item);
+  };
   useEffect(() => {
     fetchData();
     getAllMerchant();
     getAllMerchantLogs();
   }, []);
-useEffect(() => {
-  const matchingData = [];
-  reviewComments.forEach((comment) => {
-      const matchingInProcessData = inProcessData.find((processData) => processData.merchantId=== comment.merchantID.toLowerCase());
+  useEffect(() => {
+    const matchingData = [];
+    reviewComments.forEach((comment) => {
+      const matchingInProcessData = inProcessData.find(
+        (processData) =>
+          processData.merchantId === comment.merchantID.toLowerCase()
+      );
       if (matchingInProcessData) {
-          matchingData.push({
-              ...comment, 
-              merchantName: matchingInProcessData.merchantName
-          });
+        matchingData.push({
+          ...comment,
+          merchantName: matchingInProcessData.merchantName,
+        });
       }
-  });
-  setNotMatchingData(matchingData);
-}, [inProcessData,onBoardedData]);
+    });
+    setNotMatchingData(matchingData);
+  }, [inProcessData, onBoardedData]);
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
-  const[app,setApp]=useState(null);
+  const [app, setApp] = useState(null);
 
-  const handlePopoverOpen = (event,item,disc) => {
+  const handlePopoverOpen = (event, item, disc) => {
     setAnchorEl(event.currentTarget);
     setSelectedItem(item);
-    setApp(disc)
-    console.log("Item",item);
+    setApp(disc);
+    console.log("Item", item);
   };
   const handlePopoverClose = () => {
     setAnchorEl(null);
     setSelectedItem(null);
   };
 
-  const handleApprove = async(e) => {  
+  const handleApprove = async (e) => {
     e.preventDefault();
-    console.log("select",selectedItem)
+    console.log("select", selectedItem);
     try {
       const patchData = [
         {
           path: "/isFinalSubmission",
           op: "replace",
-          value:app==="approve"?true:false,
-        }, {
+          value: app === "approve" ? true : false,
+        },
+        {
           path: "/reviewedBy",
           op: "replace",
           value: storedUserId,
-
         },
         {
           path: "/reviewComments",
           op: "replace",
           value: app === "approve" ? "Approved" : reviewCom,
-
-        }
+        },
       ];
-      const response = await axios.patch(`${BASE_URL}UpdateMerchantFormSubmissions?FormId=${selectedItem.formID}&MerchantId=${selectedItem.merchantID}`, patchData);
+      const response = await axios.patch(
+        `${BASE_URL}UpdateMerchantFormSubmissions?FormId=${selectedItem.formID}&MerchantId=${selectedItem.merchantID}`,
+        patchData
+      );
       console.log("kejio", response.data.message);
       toast.success(response.data.message, {
-        position: 'top-center'
+        position: "top-center",
       });
-
-
     } catch (error) {
       console.log("error", error);
     }
 
     console.log("Approved:");
-
 
     handlePopoverClose();
   };
@@ -190,21 +190,21 @@ useEffect(() => {
   const handleDisapprove = () => {
     handlePopoverClose();
   };
-  const handleCloseModal=()=>{
+  const handleCloseModal = () => {
     setOpen(false);
-  }
-  
-  const downloadPdf = async (row) => { 
-    console.log("ow",row);
+  };
+
+  const downloadPdf = async (row) => {
+    console.log("ow", row);
     try {
       const response = await axios.get(
         `${BASE_URL}DownloadPDF?FormId=${row.formID}&MerchantId=${row.merchantID}`
       );
 
-      console.log('response 75', response.data);
+      console.log("response 75", response.data);
 
       const jsonData = JSON.stringify(response.data, null, 2);
-      console.log('83', jsonData);
+      console.log("83", jsonData);
 
       if (
         response.statusCode === 200 &&
@@ -213,44 +213,52 @@ useEffect(() => {
       ) {
         const fileUrl = response.data.fileUrl;
 
-        const link = document.createElement('a');
+        const link = document.createElement("a");
         link.href = fileUrl;
-        link.download = response.data.name || 'download.xlsx';
+        link.download = response.data.name || "download.xlsx";
         document.body.appendChild(link);
         link.click();
 
         document.body.removeChild(link);
       } else {
-        console.error('File URL not found in the response');
+        console.error("File URL not found in the response");
       }
     } catch (error) {
-      console.error('Error downloading file:', error);
+      console.error("Error downloading file:", error);
     }
-
-  }
-const adminLogs=async()=>{
-  try{
-    const response=await fetch(`${BASE_URL}GetAllAdminUpdateLogs`)
-    const result=await response.json();
-    setAllAdminLogs(result.data);
-  }catch(error){
-    console.log("error",error);
-  }
-}
-useEffect(()=>{
-adminLogs();
-},[])
-console.log("adminlogs",allAdminLogs);
+  };
+  const adminLogs = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}GetAllAdminUpdateLogs`);
+      const result = await response.json();
+      setAllAdminLogs(result.data);
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+  useEffect(() => {
+    adminLogs();
+  }, []);
+  console.log("adminlogs", allAdminLogs);
   return (
     <Box
       m="20px"
       sx={{
         marginLeft: isCollapsed ? "100px" : "300px",
+        marginTop: "100px",
         transition: "margin-left 0.3s",
       }}
     >
       {/* HEADER */}
-      <Box display="flex" justifyContent="space-between" alignItems="center">
+      <Box
+        style={{
+          position: "fixed",
+          top: "0",
+          zIndex: "1000",
+          width: "950px",
+          backgroundColor: isDark ? "#fcfcfc" : "#111b2d",
+        }}
+      >
         <Header title="DASHBOARD" subtitle="New Merchant-overview" />
       </Box>
 
@@ -300,26 +308,17 @@ console.log("adminlogs",allAdminLogs);
             }
           />
         </Box>
-        <Box gridColumn="span 4" position="relative">
-          <div
-            style={{
-              position: "fixed",
-              top: "100px", 
-              right: "0", 
-              height: "350px",
-              width: "400px",
-              overflowY: "scroll",
-            }}
-          >
+        <div>
+          <div className="adminLog">
             <h6
               style={{
                 textAlign: "center",
                 color: "#3da58a",
                 fontSize: "26px",
-                margin: "0",
-                position: 'sticky', 
-                top: 0,              
-                backgroundColor: "#141b2d", 
+                marginTop: "10px",
+                position: "sticky",
+                top: 0,
+                backgroundColor: isDark ? "#fcfcfc" : "#111b2d",
                 zIndex: 1,
               }}
             >
@@ -328,55 +327,53 @@ console.log("adminlogs",allAdminLogs);
             <br />
             <br />
             <div>
-              { allAdminLogs && allAdminLogs.map((item, index) => (
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    padding: "5px",
-                  }}
-                  key={item.adminId}
-                >
-                  <div>
-                    <p>{item.adminId}</p>
-                  </div>
+              {allAdminLogs &&
+                allAdminLogs.map((item, index) => (
+                  <div
+                    style={{
+                      display: "flex",
+                      // justifyContent: "space-between",
+                      padding: "5px",
+                    }}
+                    key={item.adminId}
+                  >
+                    <div>
+                      <p>{item.adminId}</p>
+                      {/* <p style={{ color: "#3da58a" }}>{not.txId}</p> */}
+                    </div>
 
-                  <p style={{ color: "#3da58a",cursor:'pointer' }} onClick ={()=>openViewMore(item)}>view More</p>
-                </div>
-              ))}
+                    <p
+                      style={{
+                        color: "#3da58a",
+                        cursor: "pointer",
+                        marginRight: "12px",
+                      }}
+                      onClick={() => openViewMore(item)}
+                    >
+                      view More
+                    </p>
+                  </div>
+                ))}
             </div>
           </div>
-          
 
-          <div
-            style={{
-              
-              position: "fixed",
-              top: "470px", 
-              right: "0",
-              width: "400px",
-              maxHeight: "250px", 
-              overflowY: "auto",
-
-            }}
-          >
+          <div className="merchantLog">
             <h6
-    style={{
-      textAlign: "center",
-      color: "#3da58a",
-      fontSize: "26px",
-      margin: "0",
-      position: 'sticky', 
-      top: 0,              
-      backgroundColor: "#141b2d", 
-      zIndex: 1,          
-    }}
-  >
+              style={{
+                textAlign: "center",
+                color: "#3da58a",
+                fontSize: "26px",
+                margin: "0",
+                position: "sticky",
+                top: 0,
+                backgroundColor: isDark ? "#fcfcfc" : "#111b2d",
+                zIndex: 1,
+              }}
+            >
               Merchant log
             </h6>
             <br />
             {merchantLogs.map((item) => (
-              
               <div
                 style={{
                   display: "flex",
@@ -386,11 +383,16 @@ console.log("adminlogs",allAdminLogs);
                 key={item.logId}
               >
                 <p>{item.merchantId}</p>
-                <p  onClick ={()=>openViewMore(item)} style={{ color: "#3da58a" ,cursor:'pointer' }}>view More</p>
+                <p
+                  onClick={() => openViewMore(item)}
+                  style={{ color: "#3da58a", cursor: "pointer" }}
+                >
+                  view More
+                </p>
               </div>
             ))}
           </div>
-        </Box>
+        </div>
 
         <Box
           gridColumn="span 8"
@@ -419,14 +421,13 @@ console.log("adminlogs",allAdminLogs);
                 />
                 <FormControlLabel
                   value="onBoarded"
-                  control={<Radio/>}
+                  control={<Radio />}
                   label="On Boarded"
-                  
                 />
               </RadioGroup>
             </FormControl>
           </Box>
-          <Box height="250px" m="-20px 0 0 0">
+          <Box>
             <LineChart isDashboard={true} />
           </Box>
         </Box>
@@ -469,7 +470,7 @@ console.log("adminlogs",allAdminLogs);
                         fontSize: "26px",
                         color: colors.greenAccent[500],
                       }}
-                      onClick={()=>downloadPdf(newItem)}
+                      onClick={() => downloadPdf(newItem)}
                     />
                   </IconButton>
                   <Button
@@ -479,7 +480,7 @@ console.log("adminlogs",allAdminLogs);
                       marginRight: "10px",
                       color: colors.greenAccent[500],
                     }}
-                    onClick={(e) => handlePopoverOpen(e,newItem,"approve")}
+                    onClick={(e) => handlePopoverOpen(e, newItem, "approve")}
                   >
                     approve
                   </Button>
@@ -490,7 +491,7 @@ console.log("adminlogs",allAdminLogs);
                       marginRight: "10px",
                       color: colors.greenAccent[500],
                     }}
-                    onClick={(e) => handlePopoverOpen(e, newItem,"disapprove")}
+                    onClick={(e) => handlePopoverOpen(e, newItem, "disapprove")}
                   >
                     disapprove
                   </Button>
@@ -534,19 +535,24 @@ console.log("adminlogs",allAdminLogs);
       >
         <Box p={2} style={{ textAlign: "center" }}>
           <Typography>
-            Are you sure  do you want to{" "}
-            {selectedItem ? `${app} ${selectedItem.merchantName}`: ""}?
+            Are you sure do you want to{" "}
+            {selectedItem ?` ${app} ${selectedItem.merchantName} `: ""}?
           </Typography>
-          {app=="disapprove" && <textarea placeholder="Reason for disapprove" required  onChange={(e)=>setReviewCom(e.target.value)}/>}
-          
+          {app == "disapprove" && (
+            <textarea
+              placeholder="Reason for disapprove"
+              required
+              onChange={(e) => setReviewCom(e.target.value)}
+            />
+          )}
           <br />
           <Button
             size="small"
             variant="contained"
-            onClick={(e)=>handleApprove(e)}
+            onClick={(e) => handleApprove(e)}
             color="success"
           >
-            {app=="disapprove"?"Disapprove":"Approve"}
+            {app == "disapprove" ? "Disapprove" : "Approve"}
           </Button>
           &nbsp;
           <Button
@@ -561,94 +567,89 @@ console.log("adminlogs",allAdminLogs);
       </Popover>
 
       <Modal
-  open={open}
-  onClose={handleCloseModal}
-  aria-labelledby="edit-modal-title"
-  aria-describedby="edit-modal-description"
->
-  <Box
-    sx={{
-      position: "absolute",
-      width: 400,
-      bgcolor: "background.paper",
-      boxShadow: 24,
-      p: 4,
-      top: "50%",
-      left: "50%",
-      transform: "translate(-50%, -50%)",
-    }}
-  >
-    <TextField
-      label="logId"
-      name="logId"
-      fullWidth
-      value={viewMoreData[0]?.logId}
-      InputLabelProps={{
-        style: {
-          color: isDark ? "black" : "white",
-        },
-      }}
+        open={open}
+        onClose={handleCloseModal}
+        aria-labelledby="edit-modal-title"
+        aria-describedby="edit-modal-description"
+      >
+        <Box
+          sx={{
+            position: "absolute",
+            width: 400,
+            bgcolor: "background.paper",
+            boxShadow: 24,
+            p: 4,
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+          }}
+        >
+          <TextField
+            label="logId"
+            name="logId"
+            fullWidth
+            value={viewMoreData[0]?.logId}
+            InputLabelProps={{
+              style: {
+                color: isDark ? "black" : "white",
+              },
+            }}
+            margin="normal"
+          />
+          <TextField
+            label={viewMoreData[0]?.merchantId ? "MerchantID" : "AdminID"}
+            name={viewMoreData[0]?.merchantId ? "merchantId" : "adminId"}
+            fullWidth
+            value={viewMoreData[0]?.merchantId || viewMoreData[0]?.adminId}
+            margin="normal"
+            InputLabelProps={{
+              style: {
+                color: isDark ? "black" : "white",
+              },
+            }}
+          />
+          <TextField
+            label="new Value"
+            name="newValue"
+            value={viewMoreData[0]?.newValue}
+            fullWidth
+            margin="normal"
+            InputLabelProps={{
+              style: {
+                color: isDark ? "black" : "white",
+              },
+            }}
+          />
+          <TextField
+            label="old Value"
+            name="oldValue"
+            value={viewMoreData[0]?.oldValue}
+            InputLabelProps={{
+              style: {
+                color: isDark ? "black" : "white",
+              },
+            }}
+            fullWidth
+            margin="normal"
+          />
+          <TextField
+            label="update Field"
+            // disabled
 
-      margin="normal"
-    />
-    <TextField
-  label={viewMoreData[0]?.merchantId ? "MerchantID" : "AdminID"}
-  name={viewMoreData[0]?.merchantId?"merchantId":"adminId"}
-  fullWidth
-  value={viewMoreData[0]?.merchantId || viewMoreData[0]?.adminId}
-  margin="normal"
-  InputLabelProps={{
-    style: {
-      color: isDark ? "black" : "white",
-    },
-  }}
-
-/>
-    <TextField
-      label="new Value"
-     name="newValue"
-     value={viewMoreData[0]?.newValue}
-
-      fullWidth
-      margin="normal"
-      InputLabelProps={{
-        style: {
-          color: isDark ? "black" : "white",
-        },
-      }}
-
-    />
-    <TextField
-      label="old Value"
-      name="oldValue"
-      value={viewMoreData[0]?.oldValue}
-      InputLabelProps={{
-        style: {
-          color: isDark ? "black" : "white",
-        },
-      }}
-
-      fullWidth
-      margin="normal"
-    />
-    <TextField
-      label="update Field"
-      // disabled
-    
-      name="updateField"
-      value={viewMoreData[0]?.updatedField || viewMoreData[0]?.updateField}
-      InputLabelProps={{
-        style: {
-          color: isDark ? "black" : "white",
-        },
-      }}
-
-      fullWidth
-      margin="normal"
-    />
-
-  </Box>
-</Modal>
+            name="updateField"
+            value={
+              viewMoreData[0]?.updatedField || viewMoreData[0]?.updateField
+            }
+            InputLabelProps={{
+              style: {
+                color: isDark ? "black" : "white",
+              },
+            }}
+            fullWidth
+            margin="normal"
+          />
+        </Box>
+      </Modal>
     </Box>
   );
 };

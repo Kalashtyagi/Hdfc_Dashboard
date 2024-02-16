@@ -1,0 +1,67 @@
+.adminLog {
+    position: fixed;
+    top: 100px;
+    right: 20px;
+    height: 350px;
+    width: 400px;
+    overflow-y: auto;
+  }
+  
+  .adminLog::-webkit-scrollbar {
+    width: 0.5em;
+  }
+  
+  .adminLog::-webkit-scrollbar-track {
+    background-color: #f5f5f5;
+  }
+  
+  .adminLog::-webkit-scrollbar-thumb {
+    background-color: #000000;
+  }
+  @media (max-width: 1500px) {
+    .adminLog {
+      height: 250px;
+      width: 300px;
+    }
+  }
+  
+  @media (max-width: 1200px) {
+    .adminLog {
+      height: 250px;
+      width: 250px;
+    }
+  }
+  
+  .merchantLog {
+    position: fixed;
+    top: 450px;
+    right: 20px;
+    height: 350px;
+    width: 400px;
+    overflow-y: auto;
+  }
+  
+  .merchantLog::-webkit-scrollbar {
+    width: 0.5em;
+  }
+  
+  .merchantLog::-webkit-scrollbar-track {
+    background-color: #f5f5f5;
+  }
+  
+  .merchantLog::-webkit-scrollbar-thumb {
+    background-color: #000000;
+  }
+  @media (max-width: 1500px) {
+    .merchantLog {
+      height: 250px;
+      width: 300px;
+    }
+  }
+  
+  @media (max-width: 1200px) {
+    .merchantLog {
+      height: 250px;
+      width: 250px;
+    }
+  }

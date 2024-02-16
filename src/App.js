@@ -26,11 +26,11 @@ function App() {
   const storedUserId = sessionStorage.getItem("userId");
  
   useEffect(()=>{
+    // Auth();
     if(!storedUserId){
       return  navigate("/")
     }
   },[storedUserId,navigate])
-
 
   const isLoginPage = window.location.pathname === "/";
   const isForgetPassword = window.location.pathname === "/reset-password";

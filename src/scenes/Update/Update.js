@@ -298,6 +298,7 @@ const handlePhone=async(e)=>{
                 color: isDark ? "black" : "white",
               },
             }}
+             
             sx={{ gridColumn: "span 2" }}
           
            
@@ -315,6 +316,7 @@ const handlePhone=async(e)=>{
                 color: isDark ? "black" : "white",
               },
             }}
+            
             sx={{ gridColumn: "span 2" }}
            
            
@@ -349,6 +351,9 @@ const handlePhone=async(e)=>{
                 color: isDark ? "black" : "white",
               },
             }}
+            inputProps={{
+              min:"0"
+            }}  
             sx={{ gridColumn: "span 2" }}
             
           />
@@ -365,6 +370,9 @@ const handlePhone=async(e)=>{
                 color: isDark ? "black" : "white",
               },
             }}
+            inputProps={{
+              min:"0"
+            }}  
             sx={{ gridColumn: "span 2" }}
           />
         </Box>

@@ -18,7 +18,7 @@ import { SidebarContext } from "./SidebarContext";
 import FeedIcon from "@mui/icons-material/Feed";
 import ArticleIcon from "@mui/icons-material/Article";
 import { useNavigate } from "react-router-dom";
-import { toast,ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 
 const Item = ({ title, to, icon, selected, setSelected }) => {
   const theme = useTheme();
@@ -39,7 +39,7 @@ const Item = ({ title, to, icon, selected, setSelected }) => {
 };
 
 const Sidebar = () => {
-  const navigate=useNavigate();
+  const navigate = useNavigate();
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   // const [isCollapsed, setIsCollapsed] = useState(false);
@@ -58,23 +58,6 @@ const Sidebar = () => {
   // }
   return (
     <Box
-      // sx={{
-      //   "& .pro-sidebar-inner": {
-      //     background: `${colors.primary[400]} !important`,
-      //   },
-      //   "& .pro-icon-wrapper": {
-      //     backgroundColor: "transparent !important",
-      //   },
-      //   "& .pro-inner-item": {
-      //     padding: "5px 35px 5px 20px !important",
-      //   },
-      //   "& .pro-inner-item:hover": {
-      //     color: "#868dfb !important",
-      //   },
-      //   "& .pro-menu-item.active": {
-      //     color: "#6870fa !important",
-      //   },
-      // }}
       sx={{
         position: "fixed",
         top: 0, // Start from the top of the viewport
@@ -117,12 +100,15 @@ const Sidebar = () => {
                 display="flex"
                 justifyContent="space-between"
                 alignItems="center"
-                ml="15px"
+                ml="37px"
               >
                 <Typography variant="h3" color={colors.grey[100]}>
                   ADMINS
                 </Typography>
-                <IconButton onClick={() => setIsCollapsed(!isCollapsed)}>
+                <IconButton
+                  onClick={() => setIsCollapsed(!isCollapsed)}
+                  style={{ marginRight: "-10px" }}
+                >
                   <MenuOutlinedIcon />
                 </IconButton>
               </Box>
@@ -141,7 +127,7 @@ const Sidebar = () => {
             <Typography
               variant="h6"
               color={colors.grey[300]}
-              sx={{ m: "15px 0 5px 20px" }}
+              sx={{ m: "15px 0 5px 30px" }}
             >
               Data
             </Typography>
@@ -170,7 +156,7 @@ const Sidebar = () => {
             <Typography
               variant="h6"
               color={colors.grey[300]}
-              sx={{ m: "15px 0 5px 20px" }}
+              sx={{ m: "15px 0 5px 30px" }}
             >
               Pages
             </Typography>
@@ -200,7 +186,7 @@ const Sidebar = () => {
             <Typography
               variant="h6"
               color={colors.grey[300]}
-              sx={{ m: "15px 0 5px 20px" }}
+              sx={{ m: "15px 0 5px 30px" }}
             >
               Forms
             </Typography>
@@ -215,7 +201,7 @@ const Sidebar = () => {
             <Typography
               variant="h6"
               color={colors.grey[300]}
-              sx={{ m: "15px 0 5px 20px" }}
+              sx={{ m: "15px 0 5px 29px" }}
             >
               Accounts
             </Typography>
@@ -247,7 +233,6 @@ const Sidebar = () => {
               icon={<LogoutIcon />}
               selected={selected}
               setSelected={setSelected}
-            
             />
             {/* </div> */}
           </Box>

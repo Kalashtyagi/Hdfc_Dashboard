@@ -1,9 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { LineChart } from "@mui/x-charts/LineChart";
 import { BASE_URL } from "../apiConfig";
+import { useMediaQuery, useTheme } from "@mui/material";
 
 const MonthlyLineChart = () => {
-  const [monthlyData, setMonthlyData] = useState({ uData: [], pData: [], xLabels: [] });
+  const [monthlyData, setMonthlyData] = useState({
+    uData: [],
+    pData: [],
+    xLabels: [],
+  });
+
+  const theme = useTheme();
+  const matches = useMediaQuery(theme.breakpoints.down("xl"));
 
   useEffect(() => {
     fetchData();
@@ -27,7 +35,9 @@ const MonthlyLineChart = () => {
 
   const extractChartData = (dataFromApi) => {
     const monthlyCounts = dataFromApi.reduce((acc, item) => {
-      const month = new Date(item.submissionDate).toLocaleString("en-US", { month: "short" });
+      const month = new Date(item.submissionDate).toLocaleString("en-US", {
+        month: "short",
+      });
 
       if (!acc[month]) {
         acc[month] = { uCount: 0, pCount: 0, details: [] };
@@ -61,8 +71,8 @@ const MonthlyLineChart = () => {
 
   return (
     <LineChart
-      width={800}
-      height={250}
+      width={matches ? 500 : 750}
+      height={240}
       series={[
         { data: monthlyData.pData, label: "This Year", id: "thisYearId" },
         { data: monthlyData.uData, label: "Last Year", id: "lastYearId" },

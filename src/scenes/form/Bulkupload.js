@@ -63,6 +63,7 @@ const hardcodedOptions = [
 
 const Bulkupload = () => {
   const { isDark } = useContext(DarkContext);
+  console.log("log",isDark)
 
   const theme = useTheme();
   const [personName, setPersonName] = React.useState([]);
@@ -132,7 +133,7 @@ const Bulkupload = () => {
   return (
     <div>
       <Box
-        gridRow="span 6"
+        // gridRow="span 6"
         sx={{
           flexGrow: 1,
           marginLeft: isCollapsed ? "100px" : "300px",
@@ -142,30 +143,23 @@ const Bulkupload = () => {
         <Box display="flex" justifyContent="space-between">
           <Header title="Bulk Upload" />
         </Box>
-        <Grid container spacing={2}>
-          <Grid item xs={4}>
-            <FormControl sx={{ m: 1, width: 300 }}>
+        <Grid container spacing={3}>
+          <Grid item sx={4}>
+          <FormControl variant="filled" style={{width:'300px'}}>
               <InputLabel
-                id="demo-multiple-name-label"
-                style={{ color: "white" }}
+                id="demo-simple-select-filled-label"
+                style={{ color: isDark ? "black" : "white" }}
               >
-                User Type
+                Form Type
               </InputLabel>
-
               <Select
-                labelId="demo-multiple-name-label"
-                id="demo-multiple-name"
-                value={personName}
-                onChange={handleChange}
-                input={<CustomOutlinedInput label="User Type" />}
-                MenuProps={MenuProps}
-                InputLabelProps={{
-                  style: {
-                    color: isDark ? "white" : "black",
-                  },
-                }}
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                label="Admin Type"
+                type="select"
+                name="formType" 
               >
-                {hardcodedOptions.map((item) => (
+                 {hardcodedOptions.map((item) => (
                   <MenuItem
                     key={item.id}
                     value={item.name}
@@ -175,20 +169,10 @@ const Bulkupload = () => {
                     {item.name}
                   </MenuItem>
                 ))}
-                {/* {dropdownData.map((item) => (
-                  <MenuItem
-                    key={item.id}
-                    value={item.name}
-                    style={getStyles(item.name, personName, theme)}
-                    onClick={(event) => handleMenuItemClick(event, item.id)}
-                  >
-                    {item.name}
-                  </MenuItem>
-                ))} */}
               </Select>
-            </FormControl>
+            </FormControl> 
           </Grid>
-          <Grid item sx={2} style={{ marginTop: "13px" }}>
+          <Grid item sx={4}>
             <Button
               component="label"
               variant="contained"
@@ -207,15 +191,20 @@ const Bulkupload = () => {
             <p style={{ color: "#03c6a1" }}>
               {selectedFile ? selectedFile.name : "No file selected"}
             </p>
-          </Grid>
-        </Grid>
-        <Button
+          </Grid >
+          <Grid item sx={4}>
+          <Button
+          size="large"
           variant="contained"
           color="success"
           onClick={handleUpload}
         >
           Upload
         </Button>
+          </Grid>
+         
+        </Grid>
+        
        
       </Box>
       <ToastContainer position="top-center" />

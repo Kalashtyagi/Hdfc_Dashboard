@@ -7,18 +7,25 @@ import { DarkContext } from "../../scenes/global/DarkBar";
 function SendEmailModal({rowData,emailModalOpen,setEmailModalOpen,handleCloseEmailModal}){   
   const { isDark } = useContext(DarkContext); 
      const[formId,setFormId]=useState([]);
+     const storedUserId = sessionStorage.getItem("userId");
+     const[body,setBody]=useState('');
+     const[subject,setSubject]=useState('');
+
      const[emailData,setEmailData]=useState({
         name:'',
         email:'',
         merchantId:'',
         formId:''
       })
+     
       useEffect(()=>{
         setEmailData({ 
              name:rowData?.merchantName,
              email:rowData?.email,
              merchantId:rowData?.merchantId,    
         })
+
+        
     
       },[rowData])
     const getAllFormId=async()=>{
@@ -34,10 +41,35 @@ function SendEmailModal({rowData,emailModalOpen,setEmailModalOpen,handleCloseEma
     useEffect(()=>{
           getAllFormId();
     },[rowData])
-    const handleSendEmail=async()=>{ 
-        console.log("die",emailData)
+    const handleSendEmail=async(e)=>{   
+      e.preventDefault();
+           try{ 
+            const response=await axios.post(`${BASE_URL}SendEmail`,{
+                adminId:storedUserId,
+                toEmailId:rowData?.email,
+                body:body,
+                subject:subject
+            })
+             if(response?.status===200){
+              toast.success(response.data.message);
+              console.log("response",response.data.message);
+              setBody('');
+              setSubject('');
+             }
+            else{
+              // toast.error("somethings went wrong please try again")
+            }
+
+           }catch(error){
+            toast.error(error.message)
+
+            console.log("error",error);
+           }
+
+        console.log("die",subject,body)
         handleCloseEmailModal();
       }
+     
     return(
         <Modal
         open={emailModalOpen}
@@ -110,7 +142,7 @@ function SendEmailModal({rowData,emailModalOpen,setEmailModalOpen,handleCloseEma
             type="select"
             label="FormId"
            
-
+             
             
             value={emailData.formId}
             onChange={(e) => setEmailData({ ...emailData, formId: e.target.value })}
@@ -124,6 +156,37 @@ function SendEmailModal({rowData,emailModalOpen,setEmailModalOpen,handleCloseEma
             ))}
           </Select>
           </FormControl>
+          <TextField
+          label="Subject"
+          name="subject"
+          required
+          value={subject}
+          onChange={(e)=>setSubject(e.target.value)}
+
+          fullWidth
+          margin="normal"
+          InputLabelProps={{
+            style: {
+              color: isDark ? "black" : "white",
+            },
+          }}
+        />
+         <TextField
+          label="Body"
+          name="body"
+          required
+          value={body}
+          onChange={(e)=>setBody(e.target.value)}
+          fullWidth
+          multiline
+          rows={4}
+          margin="normal"
+          InputLabelProps={{
+            style: {
+              color: isDark ? "black" : "white",
+            },
+          }}
+        />
 
           <Box sx= {{ display: "flex", justifyContent: "flex-end", marginTop: 2 }}>
             <Button

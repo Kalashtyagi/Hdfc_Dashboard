@@ -203,15 +203,14 @@ const onSubmit = async (data) => {
               style: {
                 color: isDark ? "black" : "white",
                 shrink: true,
-
+                
               },
-            }}
-            
-           
+            }}         
+            inputProps={{
+              min:"0"
+            }}  
             {...register("totalParts", {
               required: "Total parts is required",
-              
-              // maxLength: 2,  
               inputMode: "numeric",            
               validate:validateTotalParts,
             })}

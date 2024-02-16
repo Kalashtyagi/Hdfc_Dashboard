@@ -228,6 +228,9 @@ const CreateAdmin = () => {
                 color: isDark ? "black" : "white",
               },
             }}
+            inputProps={{
+              min:"0"
+            }}  
             sx={{ gridColumn: "span 2" }}
             {...register("phone_Number", {
               required: "Phone_Number is required",
