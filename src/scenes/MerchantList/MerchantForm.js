@@ -86,39 +86,30 @@ const MerchantForm = () => {
     // Close popover
     handlePopoverClose();
   };
-
   const handlePdf = async (row) => {
     try {
       const response = await axios.get(
-        `${BASE_URL}DownloadPDF?FormId=${row.formID}&MerchantId=${row.merchantID}`
+        `${BASE_URL}DownloadPDF?FormId=${row.formID}&MerchantId=${row.merchantID}`,
+        {
+          responseType: 'blob', // Set response type to blob
+        }
       );
-
-      console.log("response 75", response.data);
-
-      // const jsonData = JSON.stringify(response.data, null, 2);
-      // console.log('83', jsonData);
-
-      // if (
-      //   response.statusCode === 200 &&
-      //   response.data &&
-      //   response.data.fileUrl
-      // ) {
-      //   const fileUrl = response.data.fileUrl;
-
-      //   const link = document.createElement('a');
-      //   link.href = fileUrl;
-      //   link.download = response.data.name || 'download.xlsx';
-      //   document.body.appendChild(link);
-      //   link.click();
-
-      //   document.body.removeChild(link);
-      // } else {
-      //   console.error('File URL not found in the response');
-      // }
+  
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+  
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'file.pdf');
+      document.body.appendChild(link);
+      link.click();
+        window.URL.revokeObjectURL(url);
+      document.body.removeChild(link);
     } catch (error) {
-      console.error("Error downloading file:", error);
+      console.error('Error downloading file:', error);
     }
   };
+  
 
   const columns = [
     {
@@ -155,7 +146,7 @@ const MerchantForm = () => {
     {
       field: "isFinalSubmission",
       headerName: "Is Final Submission",
-      flex: 2,
+      flex: 1,
       headerAlign: "center",
     },
     {
