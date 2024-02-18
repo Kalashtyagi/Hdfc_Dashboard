@@ -14,6 +14,7 @@ import DownloadIcon from "@mui/icons-material/Download";
 import { Popover } from "@mui/material";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
+import ApprovePopOver from "../../components/Modal/ApprovePopOver";
 
 const MerchantForm = () => {
   const [data, setData] = useState([]);
@@ -59,7 +60,7 @@ const MerchantForm = () => {
         {
           path: "/reviewComments",
           op: "replace",
-          value: app === "approve" ? "Approved" : reviewComments,
+          value: app == "approve" ? "Approved" : reviewComments,
         },
       ];
       const response = await axios.patch(
@@ -91,7 +92,7 @@ const MerchantForm = () => {
       const response = await axios.get(
         `${BASE_URL}DownloadPDF?FormId=${row.formID}&MerchantId=${row.merchantID}`,
         {
-          responseType: 'blob', // Set response type to blob
+          responseType: 'blob',
         }
       );
   
@@ -128,7 +129,7 @@ const MerchantForm = () => {
     {
       field: "formID",
       headerName: "Form Id",
-      flex: 4,
+      flex: 5,
       headerAlign: "center",
     },
     {
@@ -193,38 +194,7 @@ const MerchantForm = () => {
           </div>
         );
       },
-      // renderCell: (params) => (
-      //   <div
-      //     style={{
-      //       cursor: "pointer",
-      //       display: "flex",
-      //       justifyContent: "center",
-      //       textAlign: "center",
-      //     }}
 
-      //   >
-      //     <Button
-      //       size="small"
-      //       variant="contained"
-      //       color="success"
-      //       onClick={(e) => handlePopoverOpen(e, "approve")}
-      //     >
-      //       Approve
-      //     </Button>
-      //     &nbsp;{" "}
-      //     <Button
-      //       size="small"
-      //       variant="contained"
-      //       color="error"
-      //       onClick={(e) => handlePopoverOpen(e, "disapprove")}
-      //     >
-      //       Disapprove
-      //     </Button>
-      //     &nbsp;&nbsp;
-      //     <Button size="small" variant="contained"> <DownloadIcon /></Button>
-
-      //   </div>
-      // ),
     },
   ];
   const fetchData = async () => {
@@ -289,53 +259,12 @@ const MerchantForm = () => {
           rows={data}
           columns={columns}
           components={{ Toolbar: GridToolbar }}
+          
         />
       </Box>
-      <Popover
-        open={Boolean(anchorEl)}
-        anchorEl={anchorEl}
-        onClose={handlePopoverClose}
-        anchorOrigin={{
-          vertical: "top",
-          horizontal: "right",
-        }}
-        transformOrigin={{
-          vertical: "bottom",
-          horizontal: "right",
-        }}
-      >
-        <Box p={2} style={{ textAlign: "center" }}>
-          <Typography>
-            Are you sure do you want to{" "}
-            {selectedItem ? `${selectedItem}` : `${app}`}?
-          </Typography>
-          {app == "disapprove" && (
-            <textarea
-              placeholder="Reason for disapprove"
-              required
-              onChange={(e) => setReviewComments(e.target.value)}
-            />
-          )}
-          <br />
-          <Button
-            size="small"
-            variant="contained"
-            onClick={(e) => handleApprove(e)}
-            color="success"
-          >
-            {app == "disapprove" ? "Disapprove" : "Approve"}
-          </Button>
-          &nbsp;
-          <Button
-            size="small"
-            variant="contained"
-            onClick={handlePopoverClose}
-            color="error"
-          >
-            Cancel
-          </Button>
-        </Box>
-      </Popover>
+      <ApprovePopOver  anchorEl={anchorEl} rowData={rowData} app={app} handlePopoverClose={handlePopoverClose} />
+
+     
       <ToastContainer />
     </Box>
   );

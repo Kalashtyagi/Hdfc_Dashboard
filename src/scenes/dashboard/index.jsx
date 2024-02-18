@@ -32,6 +32,7 @@ import { Modal, TextField } from "@mui/material";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import { DarkContext } from "../global/DarkBar";
+import ApprovePopOver from "../../components/Modal/ApprovePopOver";
 import "./index.css";
 
 const Dashboard = () => {
@@ -48,7 +49,7 @@ const Dashboard = () => {
   const handleChange1 = (event) => {
     setValue(event.target.value);
   };
-
+console.log("value",value);
   const handleChange = (event) => {
     setValue(event.target.value);
   };
@@ -149,82 +150,31 @@ const Dashboard = () => {
     setSelectedItem(null);
   };
 
-  const handleApprove = async (e) => {
-    e.preventDefault();
-    console.log("select", selectedItem);
-    try {
-      const patchData = [
-        {
-          path: "/isFinalSubmission",
-          op: "replace",
-          value: app === "approve" ? true : false,
-        },
-        {
-          path: "/reviewedBy",
-          op: "replace",
-          value: storedUserId,
-        },
-        {
-          path: "/reviewComments",
-          op: "replace",
-          value: app === "approve" ? "Approved" : reviewCom,
-        },
-      ];
-      const response = await axios.patch(
-        `${BASE_URL}UpdateMerchantFormSubmissions?FormId=${selectedItem.formID}&MerchantId=${selectedItem.merchantID}`,
-        patchData
-      );
-      console.log("kejio", response.data.message);
-      toast.success(response.data.message, {
-        position: "top-center",
-      });
-    } catch (error) {
-      console.log("error", error);
-    }
-
-    console.log("Approved:");
-
-    handlePopoverClose();
-  };
-
-  const handleDisapprove = () => {
-    handlePopoverClose();
-  };
   const handleCloseModal = () => {
     setOpen(false);
   };
 
-  const downloadPdf = async (row) => {
-    console.log("ow", row);
+  const handlePdf = async (row) => {
     try {
       const response = await axios.get(
-        `${BASE_URL}DownloadPDF?FormId=${row.formID}&MerchantId=${row.merchantID}`
+        `${BASE_URL}DownloadPDF?FormId=${row.formID}&MerchantId=${row.merchantID}`,
+        {
+          responseType: 'blob',
+        }
       );
-
-      console.log("response 75", response.data);
-
-      const jsonData = JSON.stringify(response.data, null, 2);
-      console.log("83", jsonData);
-
-      if (
-        response.statusCode === 200 &&
-        response.data &&
-        response.data.fileUrl
-      ) {
-        const fileUrl = response.data.fileUrl;
-
-        const link = document.createElement("a");
-        link.href = fileUrl;
-        link.download = response.data.name || "download.xlsx";
-        document.body.appendChild(link);
-        link.click();
-
-        document.body.removeChild(link);
-      } else {
-        console.error("File URL not found in the response");
-      }
+  
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+  
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'file.pdf');
+      document.body.appendChild(link);
+      link.click();
+        window.URL.revokeObjectURL(url);
+      document.body.removeChild(link);
     } catch (error) {
-      console.error("Error downloading file:", error);
+      console.error('Error downloading file:', error);
     }
   };
   const adminLogs = async () => {
@@ -428,7 +378,7 @@ const Dashboard = () => {
             </FormControl>
           </Box>
           <Box>
-            <LineChart isDashboard={true} />
+            <LineChart chartData={value=="inprocess"?reviewComments:onBoardedData} isDashboard={true} />
           </Box>
         </Box>
 
@@ -470,7 +420,7 @@ const Dashboard = () => {
                         fontSize: "26px",
                         color: colors.greenAccent[500],
                       }}
-                      onClick={() => downloadPdf(newItem)}
+                      onClick={() => handlePdf(newItem)}
                     />
                   </IconButton>
                   <Button
@@ -520,52 +470,7 @@ const Dashboard = () => {
           </Box>
         </Box>
       </Box>
-      <Popover
-        open={Boolean(anchorEl)}
-        anchorEl={anchorEl}
-        onClose={handlePopoverClose}
-        anchorOrigin={{
-          vertical: "top",
-          horizontal: "right",
-        }}
-        transformOrigin={{
-          vertical: "bottom",
-          horizontal: "right",
-        }}
-      >
-        <Box p={2} style={{ textAlign: "center" }}>
-          <Typography>
-            Are you sure do you want to{" "}
-            {selectedItem ?` ${app} ${selectedItem.merchantName} `: ""}?
-          </Typography>
-          {app == "disapprove" && (
-            <textarea
-              placeholder="Reason for disapprove"
-              required
-              onChange={(e) => setReviewCom(e.target.value)}
-            />
-          )}
-          <br />
-          <Button
-            size="small"
-            variant="contained"
-            onClick={(e) => handleApprove(e)}
-            color="success"
-          >
-            {app == "disapprove" ? "Disapprove" : "Approve"}
-          </Button>
-          &nbsp;
-          <Button
-            size="small"
-            variant="contained"
-            onClick={handlePopoverClose}
-            color="error"
-          >
-            Cancel
-          </Button>
-        </Box>
-      </Popover>
-
+      <ApprovePopOver  anchorEl={anchorEl} rowData={selectedItem}  app={app} handlePopoverClose={handlePopoverClose} />    
       <Modal
         open={open}
         onClose={handleCloseModal}
@@ -650,6 +555,7 @@ const Dashboard = () => {
           />
         </Box>
       </Modal>
+      <ToastContainer/>
     </Box>
   );
 };

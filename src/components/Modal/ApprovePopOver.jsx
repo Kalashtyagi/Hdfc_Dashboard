@@ -11,11 +11,14 @@ function ApprovePopOver({anchorEl,rowData,app,handlePopoverClose}){
     const storedUserId = sessionStorage.getItem("userId");
 
     console.log("props",app);
-    const handleApprove = async (e) => { 
-      if(reviewComments===''){
-        toast.warning("Write your comment to disapprove it");
-        return;
+    const handleApprove = async (e) => {  
+      if(app==="disapprove"){
+        if(reviewComments===''){
+          toast.warning("Write your comment to disapprove it");
+          return;
+        }
       }
+     
         e.preventDefault();
     
         try {
@@ -42,16 +45,18 @@ function ApprovePopOver({anchorEl,rowData,app,handlePopoverClose}){
           toast.success(response.data.message, {
             position: 'top-center'
           });
+          handlePopoverClose();
+
     
     
         } catch (error) {
           toast.error("somethings wrong please try again");
           console.log("error", error);
-        }
-    
-        console.log("Approved:");
-    
+          handlePopoverClose();
+
+        }    
         handlePopoverClose();
+
       };
       const handleDisapprove = () => {
         console.log("Disapproved:", selectedItem);
