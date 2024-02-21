@@ -37,7 +37,7 @@ const Topbar = () => {
         style={{
           position: "fixed",
           top: "15px",
-          zIndex: "1000",
+          zIndex: "2000",
 
           backgroundColor: isDark ? "#fcfcfc" : "#111b2d",
         }}

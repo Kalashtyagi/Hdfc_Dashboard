@@ -15,8 +15,13 @@ import { Popover } from "@mui/material";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import ApprovePopOver from "../../components/Modal/ApprovePopOver";
-
+import { pdfContext } from "../../Context/pdfcontext";
+import { useNavigate } from "react-router-dom";
 const MerchantForm = () => {
+  const{pdfData,setPdfData}=useContext(pdfContext);
+  console.log(pdfData.merchantId);
+  const navigate=useNavigate();
+  // console.log("me",merchantId);
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const theme = useTheme();
@@ -87,29 +92,37 @@ const MerchantForm = () => {
     // Close popover
     handlePopoverClose();
   };
-  const handlePdf = async (row) => {
-    try {
-      const response = await axios.get(
-        `${BASE_URL}DownloadPDF?FormId=${row.formID}&MerchantId=${row.merchantID}`,
-        {
-          responseType: 'blob',
-        }
-      );
+  // const handlePdf = async (row) => {
+  //   // debugger
+  //   try {
+  //     const response = await axios.get(
+  //       `${BASE_URL}DownloadPDF?FormId=${row.formID}&MerchantId=${row.merchantID}`,
+  //       {
+  //         responseType: 'blob',
+  //       }
+  //     );
   
-      const blob = new Blob([response.data], { type: 'application/pdf' });
-      const url = window.URL.createObjectURL(blob);
+  //     const blob = new Blob([response.data], { type: 'application/pdf' });
+  //     const url = window.URL.createObjectURL(blob);
   
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', 'file.pdf');
-      document.body.appendChild(link);
-      link.click();
-        window.URL.revokeObjectURL(url);
-      document.body.removeChild(link);
-    } catch (error) {
-      console.error('Error downloading file:', error);
-    }
-  };
+  //     const link = document.createElement('a');
+  //     link.href = url;
+  //     link.setAttribute('download', 'file.pdf');
+  //     document.body.appendChild(link);
+  //     link.click();
+  //       window.URL.revokeObjectURL(url);
+  //     document.body.removeChild(link);
+  //   } catch (error) {
+  //     console.error('Error downloading file:', error);
+  //   }
+  // };
+
+
+  const handlePdf=(row)=>{  
+    setPdfData({...pdfData,formID:row.formID,merchantID:row.merchantID})
+    navigate('/pdf')
+  }
+  console.log("pdfdt",pdfData);
   
 
   const columns = [

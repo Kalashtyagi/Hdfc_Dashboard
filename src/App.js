@@ -18,6 +18,7 @@ import MerchantForm from "./scenes/MerchantList/MerchantForm";
 import FormInfo from "./scenes/MerchantList/FormInfo";
 import { ToastContainer } from "react-toastify";
 import ProtectedRoute from "./utils/ProtectedRoute";
+import Pdf from "./components/pdf";
 
 function App() {
   const [theme, colorMode] = useMode();
@@ -25,17 +26,20 @@ function App() {
   const navigate = useNavigate();
   const storedUserId = sessionStorage.getItem("userId");
  
-  useEffect(()=>{
-    // Auth();
-    if(!storedUserId){
-      return  navigate("/")
-    }
-  },[storedUserId,navigate])
+  // useEffect(()=>{
+  //   // Auth();
+  //   if(!storedUserId){
+  //     return  navigate("/")
+  //   }
+  // },[storedUserId,navigate])
 
   const isLoginPage = window.location.pathname === "/";
   const isForgetPassword = window.location.pathname === "/reset-password";
+  const isPdf = window.location.pathname === "/pdf";
 
-  const sidebarVisible = isLoginPage || isForgetPassword ? false : isSidebar;
+
+  const sidebarVisible = isLoginPage || isForgetPassword || isPdf ? false : isSidebar;
+  
 
   return (
     <ColorModeContext.Provider value={colorMode}>
@@ -44,7 +48,7 @@ function App() {
         <div className="app">
           {sidebarVisible && <Sidebar isSidebar={isSidebar} />}
           <main className="content">
-            <Topbar setIsSidebar={setIsSidebar} />
+            {!isLoginPage && !isPdf && <Topbar setIsSidebar={setIsSidebar} />}
             <Routes>
               <Route path="/" element={<Login />} />
 
@@ -59,6 +63,7 @@ function App() {
               <Route path="bulkupload" element={<Bulkupload />} />
               <Route path="merchantForm" element={<MerchantForm />} />
               <Route path="formInformation" element={<FormInfo />} />
+              <Route path="/pdf" element={<Pdf/>}/>
             </Routes>
           </main>
         </div>

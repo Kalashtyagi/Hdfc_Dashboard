@@ -21,13 +21,17 @@ import { useForm } from "react-hook-form";
 import { BASE_URL } from "../../apiConfig";
 import { toast,ToastContainer} from "react-toastify";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { pdfContext } from "../../Context/pdfcontext";
 
 const CreateAdmin = () => {
   const { isDark } = useContext(DarkContext);
+  const{pdfData,setPdfData}=useContext(pdfContext);
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const [type, setType] = React.useState("");
   const { isCollapsed } = useContext(SidebarContext);
   const [showPassword, setShowPassword] = useState(false);
+
+ 
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -256,6 +260,9 @@ const CreateAdmin = () => {
                 color: isDark ? "black" : "white",
               },
             }}
+            inputProps={{
+              min:0,
+            }}
             sx={{ gridColumn: "span 2" }}
             {...register("alterNate_Phone_Number", {
               required: "Alternate phone number is required",
@@ -301,6 +308,7 @@ const CreateAdmin = () => {
           <Button type="submit" color="secondary" variant="contained">
             Create New Admin
           </Button>
+         
         </Box>
       </form><ToastContainer position="top-center"/>
     </Box>

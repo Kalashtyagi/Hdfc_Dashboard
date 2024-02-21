@@ -66,6 +66,7 @@ export default function PieActiveArc() {
         },
       ]}
       height={200}
+      width={250}
     />
   );
 }
