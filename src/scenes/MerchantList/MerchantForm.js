@@ -131,12 +131,16 @@ const MerchantForm = () => {
       headerName: "Submission Id",
       flex: 4,
       headerAlign: "center",
+      align: "center",
+      cellClassName: "custom-cell",
     },
     {
       field: "merchantID",
       headerName: "Merchant Id",
       flex: 4,
       headerAlign: "center",
+      align: "center",
+      cellClassName: "custom-cell",
     },
 
     {
@@ -144,30 +148,40 @@ const MerchantForm = () => {
       headerName: "Form Id",
       flex: 5,
       headerAlign: "center",
+      align: "center",
+      cellClassName: "custom-cell",
     },
     {
       field: "reviewComments",
       headerName: "Review Comments",
       flex: 2,
       headerAlign: "center",
+      align: "center",
+      cellClassName: "custom-cell",
     },
-    {
-      field: "submissionDate",
-      headerName: "Submission Date",
-      flex: 3,
-      headerAlign: "center",
-    },
+    // {
+    //   field: "submissionDate",
+    //   headerName: "Submission Date",
+    //   flex: 3,
+    //   headerAlign: "center",
+    //   align: "center",
+    //   cellClassName: "custom-cell",
+    // },
     {
       field: "isFinalSubmission",
       headerName: "Is Final Submission",
       flex: 1,
       headerAlign: "center",
+      align: "center",
+      cellClassName: "custom-cell",
     },
     {
       field: "action",
       headerName: "Action",
       flex: 4,
       headerAlign: "center",
+      align: "center",
+      cellClassName: "custom-cell",
       renderCell: (params) => {
         return (
           <div
@@ -242,6 +256,7 @@ const MerchantForm = () => {
         sx={{
           "& .MuiDataGrid-root": {
             border: "none",
+            overflowX: "auto",
           },
           "& .MuiDataGrid-cell": {
             borderBottom: "none",
@@ -265,6 +280,13 @@ const MerchantForm = () => {
           },
           "& .MuiDataGrid-toolbarContainer .MuiButton-text": {
             color: `${colors.grey[100]} !important`,
+          },
+          "& .custom-cell": {
+            textAlign: "center",
+            color: "white",
+          },
+          "& .MuiDataGrid-columnHeaderTitle": {
+            fontSize: "18px", // Change font size of the table headings
           },
         }}
       >

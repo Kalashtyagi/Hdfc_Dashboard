@@ -18,7 +18,7 @@ import MerchantForm from "./scenes/MerchantList/MerchantForm";
 import FormInfo from "./scenes/MerchantList/FormInfo";
 import { ToastContainer } from "react-toastify";
 import ProtectedRoute from "./utils/ProtectedRoute";
-import Pdf from "./components/pdf";
+import Pdf from "./components/pdf/pdf";
 
 function App() {
   const [theme, colorMode] = useMode();

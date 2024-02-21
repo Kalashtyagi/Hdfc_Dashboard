@@ -265,24 +265,25 @@ console.log("value",value);
                 textAlign: "center",
                 color: "#3da58a",
                 fontSize: "26px",
-                marginTop: "10px",
+                margin: "0",
                 position: "sticky",
                 top: 0,
                 backgroundColor: isDark ? "#fcfcfc" : "#111b2d",
-                zIndex: 1,
+                // zIndex: -1000,
+                borderBottom:'2px solid #3da58a'
               }}
             >
               Admin log
             </h6>
             <br />
-            <br />
+            {/* <br /> */}
             <div>
               {allAdminLogs &&
                 allAdminLogs.map((item, index) => (
                   <div
                     style={{
                       display: "flex",
-                      // justifyContent: "space-between",
+                      justifyContent: "space-between",
                       padding: "5px",
                     }}
                     key={item.adminId}
@@ -318,6 +319,8 @@ console.log("value",value);
                 top: 0,
                 backgroundColor: isDark ? "#fcfcfc" : "#111b2d",
                 zIndex: 1,
+                borderBottom:'2px solid #3da58a'
+
               }}
             >
               Merchant log
@@ -335,7 +338,7 @@ console.log("value",value);
                 <p>{item.merchantId}</p>
                 <p
                   onClick={() => openViewMore(item)}
-                  style={{ color: "#3da58a", cursor: "pointer" }}
+                  style={{ color: "#3da58a", cursor: "pointer",marginRight:'12px' }}
                 >
                   view More
                 </p>

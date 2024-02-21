@@ -85,7 +85,10 @@ const Bulkupload = () => {
     e.preventDefault();
     console.log("file", selectedFile);
     const formData = new FormData();
-
+   if(selectedFile==null){
+    toast.warning("please select excel file");
+    return;
+   }
     try {
       formData.append("file", selectedFile)
 

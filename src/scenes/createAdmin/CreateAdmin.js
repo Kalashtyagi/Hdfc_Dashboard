@@ -305,7 +305,7 @@ const CreateAdmin = () => {
           </Box>
         </Box>
         <Box display="flex" justifyContent="center" mt="20px">
-          <Button type="submit" color="secondary" variant="contained">
+          <Button type="submit" color="secondary" variant="contained" size="large">
             Create New Admin
           </Button>
          

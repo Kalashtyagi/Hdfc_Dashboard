@@ -63,12 +63,16 @@ const Contacts = () => {
       headerName: "Id",
       flex: 4,
       headerAlign: "center",
+      align: "center",
+      cellClassName: "custom-cell",
     },
     {
       field: "merchantName",
       headerName: "Name",
       flex: 1,
       headerAlign: "center",
+      align: "center",
+      cellClassName: "custom-cell",
     },
 
     {
@@ -76,36 +80,48 @@ const Contacts = () => {
       headerName: "Phone Number",
       flex: 2,
       headerAlign: "center",
+      align: "center",
+      cellClassName: "custom-cell",
     },
     {
       field: "email",
       headerName: "Email",
       flex: 3,
       headerAlign: "center",
+      align: "center",
+      cellClassName: "custom-cell",
     },
     {
       field: "address",
       headerName: "Address",
       flex: 1,
       headerAlign: "center",
+      align: "center",
+      cellClassName: "custom-cell",
     },
     {
       field: "merchantType",
       headerName: "Merchant Type",
       flex: 2,
       headerAlign: "center",
+      align: "center",
+      cellClassName: "custom-cell",
     },
     {
       field: "adminId",
       headerName: "Admin Id",
       flex: 4,
       headerAlign: "center",
+      align: "center",
+      cellClassName: "custom-cell",
     },
     {
       field: "action",
       headerName: "Action",
       flex: 2,
       headerAlign: "center",
+      align: "center",
+      cellClassName: "custom-cell",
       renderCell: (params) => (
         <div
           style={{ cursor: "pointer" }}
@@ -184,6 +200,7 @@ const Contacts = () => {
         sx={{
           "& .MuiDataGrid-root": {
             border: "none",
+            overflowX: "auto",
           },
           "& .MuiDataGrid-cell": {
             borderBottom: "none",
@@ -207,6 +224,13 @@ const Contacts = () => {
           },
           "& .MuiDataGrid-toolbarContainer .MuiButton-text": {
             color: `${colors.grey[100]} !important`,
+          },
+          "& .custom-cell": {
+            textAlign: "center",
+            color: "white",
+          },
+          "& .MuiDataGrid-columnHeaderTitle": {
+            fontSize: "15px", // Change font size of the table headings
           },
         }}
       >

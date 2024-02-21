@@ -175,7 +175,7 @@ const Sidebar = () => {
                 setSelected={setSelected}
               />
               <Item
-                title="Bulk Order"
+                title="Multiple Merchant"
                 to="/bulkupload"
                 icon={<FileCopyIcon />}
                 selected={selected}

@@ -266,6 +266,7 @@ const ChangePass = () => {
             type="submit"
             color="secondary"
             variant="contained"
+            size="large"
           >
             Generate OTP
           </Button>
@@ -320,7 +321,7 @@ const ChangePass = () => {
           <Button onClick={handleCloseModal} style={{ color: "white" }}>
             Cancel
           </Button>
-          <Button onClick={checkOtp} style={{ color: "white" }}>
+          <Button onClick={checkOtp} style={{ color: "white" }} size="large">
             Change Password
           </Button>
         </DialogActions>

@@ -265,7 +265,7 @@ const onSubmit = async (data) => {
           />
         </Box>
         <Box display="flex" justifyContent="center" mt="20px">
-          <Button type="submit" color="secondary" variant="contained">
+          <Button type="submit" color="secondary" variant="contained" size="large">
             Add Form
           </Button>
         </Box>
