@@ -1,4 +1,4 @@
-import { Box, Button, Modal, TextField } from "@mui/material";
+import { Box, Button, Modal, TextField ,CircularProgress} from "@mui/material";
 import { useEffect, useState } from "react";
 import { BASE_URL } from "../../apiConfig";
 import axios from "axios";
@@ -6,7 +6,9 @@ import { useContext } from "react";
 import { ToastClassName,toast } from "react-toastify"
 import { DarkContext } from "../../scenes/global/DarkBar";
 
-function EditModal({ selectedItem, editModalOpen, setEditModalOpen, handleCloseModal }) {
+function EditModal({ selectedItem, editModalOpen, setEditModalOpen, handleCloseModal }) { 
+  const[loading,setLoading]=useState(false);
+
   const [editData, setEditData] = useState({
     name:"",
     address:"",
@@ -24,7 +26,8 @@ function EditModal({ selectedItem, editModalOpen, setEditModalOpen, handleCloseM
 
   },[selectedItem])
 
-  const handleEditSubmit = async (email) => {
+  const handleEditSubmit = async (email) => { 
+    setLoading(true);
     try {
         const patchData = [
             {
@@ -69,23 +72,17 @@ function EditModal({ selectedItem, editModalOpen, setEditModalOpen, handleCloseM
         );
         const result=await response.data;
         console.log(result.message); 
-        toast.success(result.message)
+        setLoading(false);
+        toast.success(result.message);
+
     } catch (error) {
         console.error("Error editing merchant:", error);
-    }
-    setEditModalOpen(false);
-};
+    }finally{
+      setLoading(false);
+      setEditModalOpen(false);
 
-// const getAllFormId=async()=>{
-//   try{
-//     const response=await fetch(`${BASE_URL}GetAllFormData`)
-//     const result=await response.json();
-//     setFormId(result.data);
-//     console.log("result",result.data);
-//   }catch(error){
-//     console.log("error",error);
-//   }
-// } 
+    }
+};
   return (
     <Modal
       open={editModalOpen}
@@ -168,7 +165,7 @@ function EditModal({ selectedItem, editModalOpen, setEditModalOpen, handleCloseM
             color="success"
             onClick={() => handleEditSubmit(editData.email)}
           >
-            Edit
+           {loading?<CircularProgress size={20}/>:"Edit"}
           </Button>
           <Button
             variant="contained"

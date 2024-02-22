@@ -3,12 +3,14 @@ import { Popover } from "@mui/material";
 import { Box, CircularProgress, Button, Typography } from "@mui/material";
 import { toast } from "react-toastify";
 import axios from "axios";
-import { BASE_URL } from "../../apiConfig";
+import { BASE_URL } from "../../apiConfig"; 
+
 
 
 function ApprovePopOver({anchorEl,rowData,app,handlePopoverClose}){ 
     const [reviewComments, setReviewComments] = useState('');
     const storedUserId = sessionStorage.getItem("userId");
+    const[loading,setLoading]=useState(false);
 
     console.log("props",app);
     const handleApprove = async (e) => {  
@@ -18,7 +20,7 @@ function ApprovePopOver({anchorEl,rowData,app,handlePopoverClose}){
           return;
         }
       }
-     
+     setLoading(true);
         e.preventDefault();
     
         try {
@@ -45,17 +47,19 @@ function ApprovePopOver({anchorEl,rowData,app,handlePopoverClose}){
           toast.success(response.data.message, {
             position: 'top-center'
           });
+          setLoading(false);
           handlePopoverClose();
-
-    
-    
         } catch (error) {
           toast.error("somethings wrong please try again");
           console.log("error", error);
           handlePopoverClose();
 
-        }    
-        handlePopoverClose();
+        } finally{ 
+          setLoading(false);
+          handlePopoverClose();
+
+
+        }   
 
       };
       const handleDisapprove = () => {
@@ -89,8 +93,12 @@ function ApprovePopOver({anchorEl,rowData,app,handlePopoverClose}){
             variant="contained"
             onClick={(e) => handleApprove(e)}
             color="success"
+            disabled={loading}
+            
           >
-            {app == "disapprove" ? "Disapprove" : "Approve"}
+                    {loading ? <CircularProgress size={20} color="success"/> : (app === "disapprove" ? "Disapprove" : "Approve")}
+            
+
           </Button>
           &nbsp;
           <Button

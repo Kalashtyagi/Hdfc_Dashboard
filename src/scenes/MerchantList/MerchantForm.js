@@ -87,7 +87,7 @@ const MerchantForm = () => {
   };
 
   const handleDisapprove = () => {
-    console.log("Disapproved:", selectedItem);
+   
 
     // Close popover
     handlePopoverClose();
@@ -286,7 +286,7 @@ const MerchantForm = () => {
             color: "white",
           },
           "& .MuiDataGrid-columnHeaderTitle": {
-            fontSize: "18px", // Change font size of the table headings
+            fontSize: "15px",
           },
         }}
       >

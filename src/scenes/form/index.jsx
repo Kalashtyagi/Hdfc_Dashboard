@@ -7,22 +7,22 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import React from "react";
+import React, { useState } from "react";
 import { SidebarContext } from "../global/SidebarContext";
 import { useContext } from "react";
 import { DarkContext } from "../global/DarkBar";
 import { useForm } from "react-hook-form";
 import { toast,ToastContainer } from "react-toastify";
 import { BASE_URL } from "../../apiConfig";
+import {CircularProgress} from "@mui/material";
 
 const Form = () => {
   const storedUserId = sessionStorage.getItem("userId");
   console.log("store", storedUserId);
   const { isDark } = useContext(DarkContext);
   const isNonMobile = useMediaQuery("(min-width:600px)");
-  // const [type, setType] = React.useState("");
   const { isCollapsed } = useContext(SidebarContext);
-
+  const[loading,setLoading]=useState(false);
   // const handleChange = (event) => {
   //   setType(event.target.value);
   // };
@@ -38,6 +38,7 @@ const Form = () => {
 
   const onSubmit = async (data) => {
     console.log("data", data);
+    setLoading(true);
     try {
       const response = await fetch(`${BASE_URL}CreateMerchant`, {
         method: "POST",
@@ -59,9 +60,8 @@ const Form = () => {
       if (response?.status===200) { 
         const responseData = await response.json();
         console.log("API Response:", responseData);
-
-
         toast.success(responseData?.message);
+        setLoading(false);
 
       } else {
       }
@@ -70,6 +70,8 @@ const Form = () => {
       console.log("res",response)
     } catch (error) {
       console.error("API Error:", error);
+    }finally{
+      setLoading(false);
     }
   };
   
@@ -249,13 +251,12 @@ const Form = () => {
           </Box>
         </Box>
         <Box display="flex" justifyContent="center" mt="20px">
-          <Button type="submit" color="secondary" variant="contained">
+          <Button type="submit" color="secondary" variant="contained" >
             Create New Merchant
           </Button>
         </Box>
       </form>
-      <ToastContainer position="top-center"/>
-      
+      <ToastContainer position="top-center"/>  
     </Box>
   );
 };
