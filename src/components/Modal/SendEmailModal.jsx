@@ -15,7 +15,7 @@ function SendEmailModal({rowData,emailModalOpen,setEmailModalOpen,handleCloseEma
         name:'',
         email:'',
         merchantId:'',
-        formId:''
+        formId:null
       })
      
       useEffect(()=>{
@@ -43,19 +43,20 @@ function SendEmailModal({rowData,emailModalOpen,setEmailModalOpen,handleCloseEma
     },[rowData])
     const handleSendEmail=async(e)=>{   
       e.preventDefault();
-      if(body===''||subject===''){
-        toast.error("Please Select all the field");
-        return ;
+      if(emailData.formId==null){
+        toast.warning("chose formId");
+        return;
       }
+      
            try{ 
             const response=await axios.post(`${BASE_URL}SendEmail`,{
                 adminId:storedUserId,
                 toEmailId:rowData?.email,
-                body:body,
-                subject:subject
+              body:`http://localhost:3000/?merchantId=${rowData.merchantId}&formId=${emailData.formId}`,
+                subject:"fill your form"
             })
-             if(response?.status===200){
-              toast.success(response.data.message);
+             if(response?.status==200){
+              toast.success(response?.data?.message);
               console.log("response",response.data.message);
               setBody('');
               setSubject('');
@@ -145,7 +146,7 @@ function SendEmailModal({rowData,emailModalOpen,setEmailModalOpen,handleCloseEma
             
             type="select"
             label="FormId"
-           
+            required
              
             
             value={emailData.formId}
@@ -160,7 +161,7 @@ function SendEmailModal({rowData,emailModalOpen,setEmailModalOpen,handleCloseEma
             ))}
           </Select>
           </FormControl>
-          <TextField
+          {/* <TextField
           label="Subject"
           name="subject"
           required
@@ -190,7 +191,7 @@ function SendEmailModal({rowData,emailModalOpen,setEmailModalOpen,handleCloseEma
               color: isDark ? "black" : "white",
             },
           }}
-        />
+        /> */}
 
           <Box sx= {{ display: "flex", justifyContent: "flex-end", marginTop: 2 }}>
             <Button

@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { BASE_URL } from "../../apiConfig";
 import axios from "axios";
 import { useContext } from "react";
-import { ToastClassName,toast } from "react-toastify"
+import { ToastClassName,ToastContainer,toast } from "react-toastify"
 import { DarkContext } from "../../scenes/global/DarkBar";
 
 function EditModal({ selectedItem, editModalOpen, setEditModalOpen, handleCloseModal }) { 
@@ -71,7 +71,6 @@ function EditModal({ selectedItem, editModalOpen, setEditModalOpen, handleCloseM
             }
         );
         const result=await response.data;
-        console.log(result.message); 
         setLoading(false);
         toast.success(result.message);
 
