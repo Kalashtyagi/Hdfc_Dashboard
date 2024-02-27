@@ -26,12 +26,20 @@ function App() {
   const navigate = useNavigate();
   const storedUserId = sessionStorage.getItem("userId");
  
-  // useEffect(()=>{
-  //   // Auth();
-  //   if(!storedUserId){
-  //     return  navigate("/")
-  //   }
-  // },[storedUserId,navigate])
+  useEffect(() => {
+  const checkAuthentication = async () => {
+    try {
+      if (!storedUserId) {
+        await navigate("/");
+      }
+    } catch (error) {
+      console.error("Error occurred while checking authentication:", error);
+    }
+  };
+
+  checkAuthentication();
+
+}, [storedUserId, navigate]);
 
   const isLoginPage = window.location.pathname === "/";
   const isForgetPassword = window.location.pathname === "/reset-password";

@@ -17,11 +17,27 @@ import { toast, ToastContainer } from "react-toastify";
 import ApprovePopOver from "../../components/Modal/ApprovePopOver";
 import { pdfContext } from "../../Context/pdfcontext";
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+// import CircularProgress from "@mui/material/CircularProgress";
+
+
+
+
+const fetchData = async () => {
+  const response = await fetch(`${BASE_URL}GetallMerchantFormSubmissions`);
+  const result = await response.json();
+  const rowsWithIds = result?.data.map((row) => ({ ...row, id: uuidv4() }));
+  return rowsWithIds;
+};
+
+
 const MerchantForm = () => {
   const{pdfData,setPdfData}=useContext(pdfContext);
   console.log(pdfData.merchantId);
   const navigate=useNavigate();
-  // console.log("me",merchantId);
+  const {isLoading,error,data:MerchantSubmissionsData}=useQuery({queryKey:["SubmissionData"],
+  queryFn:fetchData,
+})
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const theme = useTheme();
@@ -224,22 +240,7 @@ const MerchantForm = () => {
 
     },
   ];
-  const fetchData = async () => {
-    try {
-      const response = await fetch(`${BASE_URL}GetallMerchantFormSubmissions`);
-      const result = await response.json();
-      const rowsWithIds = result?.data.map((row) => ({ ...row, id: uuidv4() }));
-      setData(rowsWithIds);
-      setLoading(false);
-    } catch (error) {
-      console.log(error);
-      setLoading(false);
-    }
-  };
-  useEffect(() => {
-    fetchData();
-  }, []);
-  console.log(data);
+  
 
   return (
     <Box
@@ -250,53 +251,57 @@ const MerchantForm = () => {
       }}
     >
       <Header title="Merchant Form Submission" />
-      <Box
-        m="40px 0 0 0"
-        height="75vh"
-        sx={{
-          "& .MuiDataGrid-root": {
-            border: "none",
-            overflowX: "auto",
-          },
-          "& .MuiDataGrid-cell": {
-            borderBottom: "none",
-          },
-          "& .name-column--cell": {
-            color: colors.greenAccent[300],
-          },
-          "& .MuiDataGrid-columnHeaders": {
-            backgroundColor: colors.blueAccent[700],
-            borderBottom: "none",
-          },
-          "& .MuiDataGrid-virtualScroller": {
-            backgroundColor: colors.primary[400],
-          },
-          "& .MuiDataGrid-footerContainer": {
-            borderTop: "none",
-            backgroundColor: colors.blueAccent[700],
-          },
-          "& .MuiCheckbox-root": {
-            color: `${colors.greenAccent[200]} !important`,
-          },
-          "& .MuiDataGrid-toolbarContainer .MuiButton-text": {
-            color: `${colors.grey[100]} !important`,
-          },
-          "& .custom-cell": {
-            textAlign: "center",
-            color: "white",
-          },
-          "& .MuiDataGrid-columnHeaderTitle": {
-            fontSize: "15px",
-          },
-        }}
-      >
-        <DataGrid
-          rows={data}
-          columns={columns}
-          components={{ Toolbar: GridToolbar }}
-          
-        />
-      </Box>
+      {isLoading &&   <CircularProgress color="secondary"style={{marginLeft:'45%',marginTop:'200px'}}  />}
+      {MerchantSubmissionsData && (
+  <Box
+  m="40px 0 0 0"
+  height="75vh"
+  sx={{
+    "& .MuiDataGrid-root": {
+      border: "none",
+      overflowX: "auto",
+    },
+    "& .MuiDataGrid-cell": {
+      borderBottom: "none",
+    },
+    "& .name-column--cell": {
+      color: colors.greenAccent[300],
+    },
+    "& .MuiDataGrid-columnHeaders": {
+      backgroundColor: colors.blueAccent[700],
+      borderBottom: "none",
+    },
+    "& .MuiDataGrid-virtualScroller": {
+      backgroundColor: colors.primary[400],
+    },
+    "& .MuiDataGrid-footerContainer": {
+      borderTop: "none",
+      backgroundColor: colors.blueAccent[700],
+    },
+    "& .MuiCheckbox-root": {
+      color: `${colors.greenAccent[200]} !important`,
+    },
+    "& .MuiDataGrid-toolbarContainer .MuiButton-text": {
+      color: `${colors.grey[100]} !important`,
+    },
+    "& .custom-cell": {
+      textAlign: "center",
+     
+    },
+    "& .MuiDataGrid-columnHeaderTitle": {
+      fontSize: "15px",
+    },
+  }}
+>
+  <DataGrid
+    rows={MerchantSubmissionsData}
+    columns={columns}
+    components={{ Toolbar: GridToolbar }}
+    
+  />
+</Box>
+      )}
+    
       <ApprovePopOver  anchorEl={anchorEl} rowData={rowData} app={app} handlePopoverClose={handlePopoverClose} />
 
      

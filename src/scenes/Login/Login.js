@@ -15,7 +15,7 @@ import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { useState } from "react";
+import { useState ,useEffect} from "react";
 import { BASE_URL } from "../../apiConfig";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -29,6 +29,20 @@ const defaultTheme = createTheme();
 
 export default function Login() {
   const navigate = useNavigate();
+
+  const [authChecked, setAuthChecked] = useState(false); // State to track if authentication check is completed
+
+  useEffect(() => {
+    const storedUserId = sessionStorage.getItem("userId");
+    if (storedUserId) {
+      navigate("/dashboard");
+    } else {
+      setAuthChecked(true); 
+    }
+  }, [navigate]);
+
+
+ 
   const [res, setRes] = useState("");
   const [loading, setLoading] = useState(false);
 

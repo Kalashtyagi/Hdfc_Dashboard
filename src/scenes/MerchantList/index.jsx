@@ -25,9 +25,19 @@ import EmailIcon from "@mui/icons-material/Email";
 import { EmailSharp } from "@mui/icons-material";
 import EditModal from "../../components/Modal/EditModal";
 import SendEmailModal from "../../components/Modal/SendEmailModal";
+import { useQuery } from "@tanstack/react-query";
+import CircularProgress from "@mui/material/CircularProgress";
+import Skeleton from '@mui/material/Skeleton';
 
+
+const fetchData = async () => {
+  const response = await fetch(`${BASE_URL}GetallMerchant`);
+  const result = await response.json();
+  const rowsWithIds = result?.data.map((row) => ({ ...row, id: uuidv4() }));
+  return rowsWithIds;
+};
 const Contacts = () => {
-  const [data, setData] = useState([]);
+  const [merchantData, setMerchantData] = useState([]);
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [selectedRow, setSelectedRow] = useState(null);
@@ -36,7 +46,10 @@ const Contacts = () => {
   const [emailModalOpen, setEmailModalOpen] = useState(false);
   const [formId, setFormId] = useState([]);
   const [emailRow, setEmailRow] = useState(null);
-
+  const {isLoading,error,data:data1}=useQuery({queryKey:["merchant"],
+  queryFn:fetchData,
+})
+  
   const [emailData, setEmailData] = useState({
     name: "",
     email: "",
@@ -158,22 +171,6 @@ const Contacts = () => {
   const handleCloseModal = () => {
     setEditModalOpen(false);
   };
-  const fetchData = async () => {
-    try {
-      const response = await fetch(`${BASE_URL}GetallMerchant`);
-      const result = await response.json();
-      const rowsWithIds = result?.data.map((row) => ({ ...row, id: uuidv4() }));
-
-      console.log(result);
-      setData(rowsWithIds);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  useEffect(() => {
-    fetchData();
-  }, []);
-
   const getAllFormId = async () => {
     try {
       const response = await fetch(`${BASE_URL}GetAllFormData`);
@@ -194,53 +191,58 @@ const Contacts = () => {
       }}
     >
       <Header title="Merchant List" subtitle="List of Merchants" />
-      <Box
-        m="40px 0 0 0"
-        height="75vh"
-        sx={{
-          "& .MuiDataGrid-root": {
-            border: "none",
-            overflowX: "auto",
-          },
-          "& .MuiDataGrid-cell": {
-            borderBottom: "none",
-          },
-          "& .name-column--cell": {
-            color: colors.greenAccent[300],
-          },
-          "& .MuiDataGrid-columnHeaders": {
-            backgroundColor: colors.blueAccent[700],
-            borderBottom: "none",
-          },
-          "& .MuiDataGrid-virtualScroller": {
-            backgroundColor: colors.primary[400],
-          },
-          "& .MuiDataGrid-footerContainer": {
-            borderTop: "none",
-            backgroundColor: colors.blueAccent[700],
-          },
-          "& .MuiCheckbox-root": {
-            color: `${colors.greenAccent[200]} !important`,
-          },
-          "& .MuiDataGrid-toolbarContainer .MuiButton-text": {
-            color: `${colors.grey[100]} !important`,
-          },
-          "& .custom-cell": {
-            textAlign: "center",
-            color: "white",
-          },
-          "& .MuiDataGrid-columnHeaderTitle": {
-            fontSize: "15px", // Change font size of the table headings
-          },
-        }}
-      >
-        <DataGrid
-          rows={data}
-          columns={columns}
-          components={{ Toolbar: GridToolbar }}
-          align="center"
-        />
-      </Box>
+      {/* {isLoading && <Skeleton variant="rectangular" style={{width:'100px',height:'100px',borderRadius:'50%',textAlign:'center'}}/>} */}
+      {isLoading &&   <CircularProgress color="secondary"style={{marginLeft:'45%',marginTop:'200px'}}  />}
+
+      {data1 &&(
+             <Box
+             m="40px 0 0 0"
+             height="75vh"
+             sx={{
+               "& .MuiDataGrid-root": {
+                 border: "none",
+                 overflowX: "auto",
+               },
+               "& .MuiDataGrid-cell": {
+                 borderBottom: "none",
+               },
+               "& .name-column--cell": {
+                 color: colors.greenAccent[300],
+               },
+               "& .MuiDataGrid-columnHeaders": {
+                 backgroundColor: colors.blueAccent[700],
+                 borderBottom: "none",
+               },
+               "& .MuiDataGrid-virtualScroller": {
+                 backgroundColor: colors.primary[400],
+               },
+               "& .MuiDataGrid-footerContainer": {
+                 borderTop: "none",
+                 backgroundColor: colors.blueAccent[700],
+               },
+               "& .MuiCheckbox-root": {
+                 color: `${colors.greenAccent[200]} !important`,
+               },
+               "& .MuiDataGrid-toolbarContainer .MuiButton-text": {
+                 color: `${colors.grey[100]} !important`,
+               },
+               "& .custom-cell": {
+                 textAlign: "center",
+               },
+               "& .MuiDataGrid-columnHeaderTitle": {
+                 fontSize: "15px",
+               },
+             }}
+           >
+             <DataGrid
+               rows={data1}
+               columns={columns}
+               components={{ Toolbar: GridToolbar }}
+               align="center"
+             />
+           </Box>
+      )}
+      
       <EditModal
         selectedItem={selectedRow}
         editModalOpen={editModalOpen}

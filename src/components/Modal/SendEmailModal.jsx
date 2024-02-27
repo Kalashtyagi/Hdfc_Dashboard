@@ -2,7 +2,7 @@ import { Box, Button, Modal, TextField,Grid ,FormControl,InputLabel,Select,MenuI
 import { useEffect, useState,useContext } from "react";
 import { BASE_URL } from "../../apiConfig";
 import axios from "axios";
-import { ToastClassName,toast } from "react-toastify"
+import {ToastContainer,toast } from "react-toastify"
 import { DarkContext } from "../../scenes/global/DarkBar";
 function SendEmailModal({rowData,emailModalOpen,setEmailModalOpen,handleCloseEmailModal}){   
   const { isDark } = useContext(DarkContext); 
@@ -43,6 +43,10 @@ function SendEmailModal({rowData,emailModalOpen,setEmailModalOpen,handleCloseEma
     },[rowData])
     const handleSendEmail=async(e)=>{   
       e.preventDefault();
+      if(body===''||subject===''){
+        toast.error("Please Select all the field");
+        return ;
+      }
            try{ 
             const response=await axios.post(`${BASE_URL}SendEmail`,{
                 adminId:storedUserId,

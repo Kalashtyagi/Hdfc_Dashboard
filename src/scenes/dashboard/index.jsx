@@ -63,7 +63,6 @@ console.log("value",value);
   const [reviewCom, setReviewCom] = useState("");
   const [allAdminLogs, setAllAdminLogs] = useState([]);
 
-  // const[inpro]
   const fetchData = async () => {
     try {
       const response = await fetch(`${BASE_URL}GetallMerchantFormSubmissions`);
