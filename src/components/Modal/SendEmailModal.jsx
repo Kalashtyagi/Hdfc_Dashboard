@@ -1,15 +1,18 @@
 import { Box, Button, Modal, TextField,Grid ,FormControl,InputLabel,Select,MenuItem} from "@mui/material";
 import { useEffect, useState,useContext } from "react";
 import { BASE_URL } from "../../apiConfig";
+import { EMAIL_URL } from "../../apiConfig";
 import axios from "axios";
 import {ToastContainer,toast } from "react-toastify"
 import { DarkContext } from "../../scenes/global/DarkBar";
+import {CircularProgress} from "@mui/material";
 function SendEmailModal({rowData,emailModalOpen,setEmailModalOpen,handleCloseEmailModal}){   
   const { isDark } = useContext(DarkContext); 
      const[formId,setFormId]=useState([]);
      const storedUserId = sessionStorage.getItem("userId");
      const[body,setBody]=useState('');
      const[subject,setSubject]=useState('');
+     const[loading,setLoading]=useState(false);
 
      const[emailData,setEmailData]=useState({
         name:'',
@@ -41,19 +44,21 @@ function SendEmailModal({rowData,emailModalOpen,setEmailModalOpen,handleCloseEma
     useEffect(()=>{
           getAllFormId();
     },[rowData])
-    const handleSendEmail=async(e)=>{   
+    console.log("rowdata",rowData);
+    const handleSendEmail=async(e)=>{ 
       e.preventDefault();
       if(emailData.formId==null){
         toast.warning("chose formId");
         return;
-      }
+      }      setLoading(true);  
+
       
            try{ 
             const response=await axios.post(`${BASE_URL}SendEmail`,{
                 adminId:storedUserId,
                 toEmailId:rowData?.email,
-              body:`http://localhost:3000/?merchantId=${rowData.merchantId}&formId=${emailData.formId}`,
-                subject:"fill your form"
+              body:` Fill Your  Form ${rowData.merchantName}<br/> ${EMAIL_URL}?merchantId=${rowData.merchantId}&formId=${emailData.formId}`,
+                subject:"Kindly fill the Pci Dss SaqA 1 form"
             })
              if(response?.status==200){
               toast.success(response?.data?.message);
@@ -62,13 +67,14 @@ function SendEmailModal({rowData,emailModalOpen,setEmailModalOpen,handleCloseEma
               setSubject('');
              }
             else{
-              // toast.error("somethings went wrong please try again")
             }
 
            }catch(error){
             toast.error(error.message)
 
             console.log("error",error);
+           }finally{
+            setLoading(false);
            }
 
         console.log("die",subject,body)
@@ -153,6 +159,7 @@ function SendEmailModal({rowData,emailModalOpen,setEmailModalOpen,handleCloseEma
             onChange={(e) => setEmailData({ ...emailData, formId: e.target.value })}
 
             fullWidth
+            MenuProps={{ style: { maxHeight: 200 } }} 
           >
             {formId.map((formId) => (
               <MenuItem key={formId.formId} value={formId.formId}>
@@ -161,37 +168,7 @@ function SendEmailModal({rowData,emailModalOpen,setEmailModalOpen,handleCloseEma
             ))}
           </Select>
           </FormControl>
-          {/* <TextField
-          label="Subject"
-          name="subject"
-          required
-          value={subject}
-          onChange={(e)=>setSubject(e.target.value)}
-
-          fullWidth
-          margin="normal"
-          InputLabelProps={{
-            style: {
-              color: isDark ? "black" : "white",
-            },
-          }}
-        />
-         <TextField
-          label="Body"
-          name="body"
-          required
-          value={body}
-          onChange={(e)=>setBody(e.target.value)}
-          fullWidth
-          multiline
-          rows={4}
-          margin="normal"
-          InputLabelProps={{
-            style: {
-              color: isDark ? "black" : "white",
-            },
-          }}
-        /> */}
+         
 
           <Box sx= {{ display: "flex", justifyContent: "flex-end", marginTop: 2 }}>
             <Button
@@ -199,8 +176,7 @@ function SendEmailModal({rowData,emailModalOpen,setEmailModalOpen,handleCloseEma
               color="primary"
               onClick={handleSendEmail}
             >
-              Send Email
-            </Button>
+                    {loading ? <CircularProgress size={20} color="success"/> : "Send Email"}</Button>
             <Button
               variant="contained"
               color="error"

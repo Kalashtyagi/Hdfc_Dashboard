@@ -1,3 +1,5 @@
+
+
 import {
   Box,
   Button,
@@ -32,7 +34,8 @@ import { Modal, TextField } from "@mui/material";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import { DarkContext } from "../global/DarkBar";
-import ApprovePopOver from "../../components/Modal/ApprovePopOver";
+import CircularProgress from "@mui/material/CircularProgress";
+import ApproveModal from "../../components/Modal/ApproveModal";
 import "./index.css";
 
 const Dashboard = () => {
@@ -49,7 +52,7 @@ const Dashboard = () => {
   const handleChange1 = (event) => {
     setValue(event.target.value);
   };
-console.log("value",value);
+  console.log("value", value);
   const handleChange = (event) => {
     setValue(event.target.value);
   };
@@ -158,22 +161,22 @@ console.log("value",value);
       const response = await axios.get(
         `${BASE_URL}DownloadPDF?FormId=${row.formID}&MerchantId=${row.merchantID}`,
         {
-          responseType: 'blob',
+          responseType: "blob",
         }
       );
-  
-      const blob = new Blob([response.data], { type: 'application/pdf' });
+
+      const blob = new Blob([response.data], { type: "application/pdf" });
       const url = window.URL.createObjectURL(blob);
-  
-      const link = document.createElement('a');
+
+      const link = document.createElement("a");
       link.href = url;
-      link.setAttribute('download', 'file.pdf');
+      link.setAttribute("download", "file.pdf");
       document.body.appendChild(link);
       link.click();
-        window.URL.revokeObjectURL(url);
+      window.URL.revokeObjectURL(url);
       document.body.removeChild(link);
     } catch (error) {
-      console.error('Error downloading file:', error);
+      console.error("Error downloading file:", error);
     }
   };
   const adminLogs = async () => {
@@ -190,375 +193,408 @@ console.log("value",value);
   }, []);
   console.log("adminlogs", allAdminLogs);
   return (
-    <Box
-      m="20px"
-      sx={{
-        marginLeft: isCollapsed ? "100px" : "300px",
-        marginTop: "100px",
-        transition: "margin-left 0.3s",
-      }}
-    >
-      {/* HEADER */}
-      <Box
-        style={{
-          position: "fixed",
-          top: "0",
-          zIndex: "1000",
-          width: "950px",
-          backgroundColor: isDark ? "#fcfcfc" : "#111b2d",
-        }}
-      >
-        <Header title="DASHBOARD" subtitle="New Merchant-overview" />
-      </Box>
+    <>
+      {data.length === 0 ? (
+        <>
+          <CircularProgress
+            color="secondary"
+            style={{ marginLeft: "55%", marginTop: "300px" }}
+          />
+        </>
+      ) : (
+        <Box
+          m="20px"
+          sx={{
+            marginLeft: isCollapsed ? "100px" : "300px",
+            marginTop: "100px",
+            transition: "margin-left 0.3s",
+          }}
+        >
+          {/* HEADER */}
+          <Box
+            className="header"
+            style={{ backgroundColor: isDark ? "#fcfcfc" : "#111b2d" }}
+          >
+            <Header title="DASHBOARD" subtitle="New Merchant-overview" />
+          </Box>
 
-      {/* GRID & CHARTS */}
-      <Box
-        display="grid"
-        gridTemplateColumns="repeat(12, 1fr)"
-        gridAutoRows="140px"
-        gap="10px"
-      >
-        {/* ROW 1 */}
-        <Box
-          gridColumn="span 4"
-          backgroundColor={colors.primary[400]}
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-        >
-          <StatBox
-            title={reviewComments.length}
-            subtitle="In Process"
-            progress="0.2"
-            // increase="+14%"
-            icon={
-              <LoopIcon
-                sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
-              />
-            }
-          />
-        </Box>
-        <Box
-          gridColumn="span 4"
-          backgroundColor={colors.primary[400]}
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-        >
-          <StatBox
-            title={onBoardedData.length}
-            subtitle="On Boarded"
-            progress="0.50"
-            // increase="+21%"
-            icon={
-              <HandshakeIcon
-                sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
-              />
-            }
-          />
-        </Box>
-        <div>
-          <div className="adminLog">
-            <h6
-              style={{
-                textAlign: "center",
-                color: "#3da58a",
-                fontSize: "26px",
-                margin: "0",
-                position: "sticky",
-                top: 0,
-                backgroundColor: isDark ? "#fcfcfc" : "#111b2d",
-                // zIndex: -1000,
-                borderBottom:'2px solid #3da58a'
-              }}
+          {/* GRID & CHARTS */}
+          <Box
+            display="grid"
+            gridTemplateColumns="repeat(12, 1fr)"
+            gridAutoRows="140px"
+            gap="10px"
+          >
+            {/* ROW 1 */}
+            <Box
+              gridColumn="span 4"
+              backgroundColor={colors.primary[400]}
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
             >
-              Admin log
-            </h6>
-            <br />
-            {/* <br /> */}
+              <StatBox
+                title={reviewComments.length}
+                subtitle="In Process"
+                progress="0.2"
+                // increase="+14%"
+                icon={
+                  <LoopIcon
+                    sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
+                  />
+                }
+              />
+            </Box>
+            <Box
+              gridColumn="span 4"
+              backgroundColor={colors.primary[400]}
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+            >
+              <StatBox
+                title={onBoardedData.length}
+                subtitle="On Boarded"
+                progress="0.50"
+                // increase="+21%"
+                icon={
+                  <HandshakeIcon
+                    sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
+                  />
+                }
+              />
+            </Box>
             <div>
-              {allAdminLogs &&
-                allAdminLogs.map((item, index) => (
+              <div className="adminLog" style={{ marginTop: "-90px" }}>
+                <h6
+                  style={{
+                    textAlign: "center",
+                    color: !isDark ? "white" : "black",
+                    fontSize: "26px",
+                    marginTop: "-100px",
+                    position: "sticky",
+                    top: 0,
+                    backgroundColor: isDark ? "#fcfcfc" : "#111b2d",
+                    // zIndex: -1000,
+                    // border: "4px solid #3da58a",
+                  }}
+                >
+                  Admin log
+                </h6>
+                <br />
+                {/* <br /> */}
+                <div>
+                  {allAdminLogs &&
+                    allAdminLogs.map((item, index) => (
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          padding: "5px",
+                        }}
+                        key={item.adminId}
+                      >
+                        <div>
+                          <p>{item.adminId}</p>
+                        </div>
+
+                        <p
+                          style={{
+                            color: "#3da58a",
+                            cursor: "pointer",
+                            marginRight: "12px",
+                          }}
+                          onClick={() => openViewMore(item)}
+                        >
+                          view More
+                        </p>
+                      </div>
+                    ))}
+                </div>
+              </div>
+
+              <div className="merchantLog" style={{ marginTop: "-70px" }}>
+                <h6
+                  style={{
+                    textAlign: "center",
+                    color: !isDark ? "white" : "black",
+                    fontSize: "26px",
+                    margin: "0",
+                    position: "sticky",
+                    top: 0,
+                    backgroundColor: isDark ? "#fcfcfc" : "#111b2d",
+                    zIndex: 1,
+                    // border: "4px solid #3da58a",
+                  }}
+                >
+                  Merchant log
+                </h6>
+                <br />
+                {merchantLogs.map((item) => (
                   <div
                     style={{
                       display: "flex",
                       justifyContent: "space-between",
                       padding: "5px",
                     }}
-                    key={item.adminId}
+                    key={item.logId}
                   >
-                    <div>
-                      <p>{item.adminId}</p>
-                      {/* <p style={{ color: "#3da58a" }}>{not.txId}</p> */}
-                    </div>
-
+                    <p>{item.merchantId}</p>
                     <p
+                      onClick={() => openViewMore(item)}
                       style={{
                         color: "#3da58a",
                         cursor: "pointer",
                         marginRight: "12px",
                       }}
-                      onClick={() => openViewMore(item)}
                     >
                       view More
                     </p>
                   </div>
                 ))}
-            </div>
-          </div>
-
-          <div className="merchantLog">
-            <h6
-              style={{
-                textAlign: "center",
-                color: "#3da58a",
-                fontSize: "26px",
-                margin: "0",
-                position: "sticky",
-                top: 0,
-                backgroundColor: isDark ? "#fcfcfc" : "#111b2d",
-                zIndex: 1,
-                borderBottom:'2px solid #3da58a'
-
-              }}
-            >
-              Merchant log
-            </h6>
-            <br />
-            {merchantLogs.map((item) => (
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  padding: "5px",
-                }}
-                key={item.logId}
-              >
-                <p>{item.merchantId}</p>
-                <p
-                  onClick={() => openViewMore(item)}
-                  style={{ color: "#3da58a", cursor: "pointer",marginRight:'12px' }}
-                >
-                  view More
-                </p>
               </div>
-            ))}
-          </div>
-        </div>
+            </div>
 
-        <Box
-          gridColumn="span 8"
-          gridRow="span 2"
-          backgroundColor={colors.primary[400]}
-        >
-          <Box
-            mt="25px"
-            p="0 30px"
-            display="flex "
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            <FormControl>
-              <RadioGroup
-                row
-                aria-labelledby="demo-row-radio-buttons-group-label"
-                name="row-radio-buttons-group"
-                value={value}
-                onChange={handleChange1}
+            <Box
+              gridColumn="span 8"
+              gridRow="span 2"
+              backgroundColor={colors.primary[400]}
+            >
+              <Box
+                mt="25px"
+                p="0 30px"
+                display="flex "
+                justifyContent="space-between"
+                alignItems="center"
               >
-                <FormControlLabel
-                  value="inprocess"
-                  control={<Radio />}
-                  label="In Process"
+                <FormControl>
+                  <RadioGroup
+                    row
+                    aria-labelledby="demo-row-radio-buttons-group-label"
+                    name="row-radio-buttons-group"
+                    value={value}
+                    onChange={handleChange1}
+                  >
+                    <FormControlLabel
+                      value="inprocess"
+                      control={<Radio />}
+                      label="In Process"
+                    />
+                    <FormControlLabel
+                      value="onBoarded"
+                      control={<Radio />}
+                      label="On Boarded"
+                    />
+                  </RadioGroup>
+                </FormControl>
+              </Box>
+              <Box>
+                <LineChart
+                  chartData={
+                    value == "inprocess" ? reviewComments : onBoardedData
+                  }
+                  isDashboard={true}
                 />
-                <FormControlLabel
-                  value="onBoarded"
-                  control={<Radio />}
-                  label="On Boarded"
-                />
-              </RadioGroup>
-            </FormControl>
-          </Box>
-          <Box>
-            <LineChart chartData={value=="inprocess"?reviewComments:onBoardedData} isDashboard={true} />
-          </Box>
-        </Box>
+              </Box>
+            </Box>
 
-        {/* ROW 3 */}
+            {/* ROW 3 */}
 
-        <Box
-          gridColumn="span 5"
-          gridRow="span 2"
-          overflow="auto"
-          backgroundColor={colors.primary[400]}
-        >
-          <Typography
-            variant="h4"
-            fontWeight="700"
-            sx={{ padding: "30px 30px 0 30px" }}
-          >
-            New Merchant
-          </Typography>
-          {notMatchingData.map((newItem, index) => (
-            <>
+            <Box
+              gridColumn="span 8"
+              gridRow="span 2"
+              position="relative"
+              overflow="auto"
+              backgroundColor={colors.primary[400]}
+            >
+              {/* Fixed "New Merchant" text */}
+              <Typography
+                variant="h4"
+                fontWeight="700"
+                // textAlign="center"
+                // mt="20px"
+                // mb="20px"
+                padding='auto'
+                position="sticky"
+                top="0"
+                zIndex="1"
+                backgroundColor= "#2e7c67"
+                width="100%"
+                paddingLeft="10px"
+                paddingRight="10px"
+                height={30}
+              >
+                New Merchant
+              </Typography>
+              {notMatchingData.slice(0, 10).map((newItem, index) => (
+                <>
+                  <Box
+                    display="flex"
+                    flexDirection="row"
+                    alignItems="center"
+                    justifyContent="space-between"
+                  >
+                    <Typography variant="h5" ml="10px">
+                      {newItem.merchantName}
+                    </Typography>
+                    <Typography>{newItem.merchantID}</Typography>
+
+                    <Box display="flex" marginTop="25px">
+                      <IconButton>
+                        <DownloadOutlinedIcon
+                          sx={{
+                            fontSize: "26px",
+                            color: colors.greenAccent[500],
+                            marginTop:'-7px'
+                          }}
+                          onClick={() => handlePdf(newItem)}
+                        />
+                      </IconButton>
+                      <Button
+                      size="small"
+                        variant="contained"
+                        sx={{
+                          fontSize: "15px",
+                          marginRight: "10px",
+                          height:'35px',
+                          color: colors.greenAccent[500],
+                        }}
+                        onClick={(e) =>
+                          handlePopoverOpen(e, newItem, "approve")
+                        }
+                      >
+                        approve
+                      </Button>
+                      <Button
+                        variant="contained"
+                        sx={{
+                          fontSize: "15px",
+                          marginRight: "10px",
+                          height:'35px',
+
+                          color: colors.greenAccent[500],
+                        }}
+                        onClick={(e) =>
+                          handlePopoverOpen(e, newItem, "disapprove")
+                        }
+                      >
+                        disapprove
+                      </Button>
+                    </Box>
+                  </Box>
+                </>
+              ))}
+            </Box>
+            <Box
+              gridColumn="span 8"
+              gridRow="span 2"
+              backgroundColor={colors.primary[400]}
+              p="30px"
+            >
+              <Typography variant="h5" fontWeight="600">
+                On Boarding by location
+              </Typography>
               <Box
                 display="flex"
                 flexDirection="row"
                 alignItems="center"
+                mt="25px"
                 justifyContent="space-between"
               >
-                <Typography
-                  key={index}
-                  // variant="h5"
-                  fontWeight="100"
-                  sx={{ padding: "30px 30px 0 30px" }}
-                >
-                  {newItem.merchantName}
-                </Typography>
-                <Box display="flex" marginTop="25px">
-                  <IconButton>
-                    <DownloadOutlinedIcon
-                      sx={{
-                        fontSize: "26px",
-                        color: colors.greenAccent[500],
-                      }}
-                      onClick={() => handlePdf(newItem)}
-                    />
-                  </IconButton>
-                  <Button
-                    variant="contained"
-                    sx={{
-                      fontSize: "15px",
-                      marginRight: "10px",
-                      color: colors.greenAccent[500],
-                    }}
-                    onClick={(e) => handlePopoverOpen(e, newItem, "approve")}
-                  >
-                    approve
-                  </Button>
-                  <Button
-                    variant="contained"
-                    sx={{
-                      fontSize: "15px",
-                      marginRight: "10px",
-                      color: colors.greenAccent[500],
-                    }}
-                    onClick={(e) => handlePopoverOpen(e, newItem, "disapprove")}
-                  >
-                    disapprove
-                  </Button>
-                </Box>
+                <PieActiveArc size="175" />
               </Box>
-            </>
-          ))}
-        </Box>
-        <Box
-          gridColumn="span 3"
-          gridRow="span 2"
-          backgroundColor={colors.primary[400]}
-          p="30px"
-        >
-          <Typography variant="h5" fontWeight="600">
-            On Boarding by location
-          </Typography>
-          <Box
-            display="flex"
-            flexDirection="row"
-            alignItems="center"
-            mt="25px"
-            justifyContent="space-between"
-          >
-            <PieActiveArc sise="175" />
+            </Box>
           </Box>
-        </Box>
-      </Box>
-      <ApprovePopOver  anchorEl={anchorEl} rowData={selectedItem}  app={app} handlePopoverClose={handlePopoverClose} />    
-      <Modal
-        open={open}
-        onClose={handleCloseModal}
-        aria-labelledby="edit-modal-title"
-        aria-describedby="edit-modal-description"
-      >
-        <Box
-          sx={{
-            position: "absolute",
-            width: 400,
-            bgcolor: "background.paper",
-            boxShadow: 24,
-            p: 4,
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-          }}
-        >
-          <TextField
-            label="logId"
-            name="logId"
-            fullWidth
-            value={viewMoreData[0]?.logId}
-            InputLabelProps={{
-              style: {
-                color: isDark ? "black" : "white",
-              },
-            }}
-            margin="normal"
-          />
-          <TextField
-            label={viewMoreData[0]?.merchantId ? "MerchantID" : "AdminID"}
-            name={viewMoreData[0]?.merchantId ? "merchantId" : "adminId"}
-            fullWidth
-            value={viewMoreData[0]?.merchantId || viewMoreData[0]?.adminId}
-            margin="normal"
-            InputLabelProps={{
-              style: {
-                color: isDark ? "black" : "white",
-              },
-            }}
-          />
-          <TextField
-            label="new Value"
-            name="newValue"
-            value={viewMoreData[0]?.newValue}
-            fullWidth
-            margin="normal"
-            InputLabelProps={{
-              style: {
-                color: isDark ? "black" : "white",
-              },
-            }}
-          />
-          <TextField
-            label="old Value"
-            name="oldValue"
-            value={viewMoreData[0]?.oldValue}
-            InputLabelProps={{
-              style: {
-                color: isDark ? "black" : "white",
-              },
-            }}
-            fullWidth
-            margin="normal"
-          />
-          <TextField
-            label="update Field"
-            // disabled
+         
+          <ApproveModal anchorEl={anchorEl} rowData={selectedItem}app={app}handlePopoverClose={handlePopoverClose}/>
+          <Modal
+            open={open}
+            onClose={handleCloseModal}
+            aria-labelledby="edit-modal-title"
+            aria-describedby="edit-modal-description"
+          >
+            <Box
+              sx={{
+                position: "absolute",
+                width: 400,
+                bgcolor: "background.paper",
+                boxShadow: 24,
+                p: 4,
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+              }}
+            >
+              <TextField
+                label="logId"
+                name="logId"
+                fullWidth
+                value={viewMoreData[0]?.logId}
+                InputLabelProps={{
+                  style: {
+                    color: isDark ? "black" : "white",
+                  },
+                }}
+                margin="normal"
+              />
+              <TextField
+                label={viewMoreData[0]?.merchantId ? "MerchantID" : "AdminID"}
+                name={viewMoreData[0]?.merchantId ? "merchantId" : "adminId"}
+                fullWidth
+                value={viewMoreData[0]?.merchantId || viewMoreData[0]?.adminId}
+                margin="normal"
+                InputLabelProps={{
+                  style: {
+                    color: isDark ? "black" : "white",
+                  },
+                }}
+              />
+              <TextField
+                label="new Value"
+                name="newValue"
+                value={viewMoreData[0]?.newValue}
+                fullWidth
+                margin="normal"
+                InputLabelProps={{
+                  style: {
+                    color: isDark ? "black" : "white",
+                  },
+                }}
+              />
+              <TextField
+                label="old Value"
+                name="oldValue"
+                value={viewMoreData[0]?.oldValue}
+                InputLabelProps={{
+                  style: {
+                    color: isDark ? "black" : "white",
+                  },
+                }}
+                fullWidth
+                margin="normal"
+              />
+              <TextField
+                label="update Field"
+                // disabled
 
-            name="updateField"
-            value={
-              viewMoreData[0]?.updatedField || viewMoreData[0]?.updateField
-            }
-            InputLabelProps={{
-              style: {
-                color: isDark ? "black" : "white",
-              },
-            }}
-            fullWidth
-            margin="normal"
-          />
+                name="updateField"
+                value={
+                  viewMoreData[0]?.updatedField || viewMoreData[0]?.updateField
+                }
+                InputLabelProps={{
+                  style: {
+                    color: isDark ? "black" : "white",
+                  },
+                }}
+                fullWidth
+                margin="normal"
+              />
+            </Box>
+          </Modal>
+          <ToastContainer />
         </Box>
-      </Modal>
-      <ToastContainer/>
-    </Box>
+      )}
+    </>
   );
 };
 

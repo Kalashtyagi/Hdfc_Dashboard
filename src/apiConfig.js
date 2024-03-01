@@ -1,2 +1,4 @@
-const BASE_URL = "http://hdfcbackend-dev.eba-2dfdccz5.us-east-1.elasticbeanstalk.com/api/";
-export { BASE_URL };
+const BASE_URL = "http://hdfcbackend1-dev.eba-gn8g2pzy.us-east-1.elasticbeanstalk.com/api/";
+const EMAIL_URL="http://merchantform.s3-website.ap-south-1.amazonaws.com/"
+export { BASE_URL,EMAIL_URL };
+  

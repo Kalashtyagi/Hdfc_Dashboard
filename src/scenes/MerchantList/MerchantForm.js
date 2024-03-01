@@ -18,6 +18,7 @@ import ApprovePopOver from "../../components/Modal/ApprovePopOver";
 import { pdfContext } from "../../Context/pdfcontext";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import ApproveModal from "../../components/Modal/ApproveModal";
 // import CircularProgress from "@mui/material/CircularProgress";
 
 
@@ -108,37 +109,37 @@ const MerchantForm = () => {
     // Close popover
     handlePopoverClose();
   };
-  // const handlePdf = async (row) => {
-  //   // debugger
-  //   try {
-  //     const response = await axios.get(
-  //       `${BASE_URL}DownloadPDF?FormId=${row.formID}&MerchantId=${row.merchantID}`,
-  //       {
-  //         responseType: 'blob',
-  //       }
-  //     );
+  const handlePdf = async (row) => {
+    console.log("row",row);
+    try {
+      const response = await axios.get(
+        `${BASE_URL}DownloadPDF?FormId=${row.formID}&MerchantId=${row.merchantID}`,
+        {
+          responseType: 'blob',
+        }
+      );
   
-  //     const blob = new Blob([response.data], { type: 'application/pdf' });
-  //     const url = window.URL.createObjectURL(blob);
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
   
-  //     const link = document.createElement('a');
-  //     link.href = url;
-  //     link.setAttribute('download', 'file.pdf');
-  //     document.body.appendChild(link);
-  //     link.click();
-  //       window.URL.revokeObjectURL(url);
-  //     document.body.removeChild(link);
-  //   } catch (error) {
-  //     console.error('Error downloading file:', error);
-  //   }
-  // };
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'file.pdf');
+      document.body.appendChild(link);
+      link.click();
+        window.URL.revokeObjectURL(url);
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error('Error downloading file:', error);
+    }
+  };
 
 
-  const handlePdf=(row)=>{  
-    setPdfData({...pdfData,formID:row.formID,merchantID:row.merchantID})
-    navigate('/pdf')
-  }
-  console.log("pdfdt",pdfData);
+  // const handlePdf=(row)=>{  
+  //   setPdfData({...pdfData,formID:row.formID,merchantID:row.merchantID})
+  //   navigate('/pdf')
+  // }
+  // console.log("pdfdt",pdfData);
   
 
   const columns = [
@@ -301,8 +302,8 @@ const MerchantForm = () => {
   />
 </Box>
       )}
-    
-      <ApprovePopOver  anchorEl={anchorEl} rowData={rowData} app={app} handlePopoverClose={handlePopoverClose} />
+    <ApproveModal  anchorEl={anchorEl} rowData={rowData} app={app} handlePopoverClose={handlePopoverClose}/>
+      {/* <ApprovePopOver  anchorEl={anchorEl} rowData={rowData} app={app} handlePopoverClose={handlePopoverClose} /> */}
 
      
       <ToastContainer />

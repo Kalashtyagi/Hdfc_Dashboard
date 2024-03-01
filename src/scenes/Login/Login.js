@@ -32,14 +32,14 @@ export default function Login() {
 
   const [authChecked, setAuthChecked] = useState(false); // State to track if authentication check is completed
 
-  useEffect(() => {
-    const storedUserId = sessionStorage.getItem("userId");
-    if (storedUserId) {
-      navigate("/dashboard");
-    } else {
-      setAuthChecked(true); 
-    }
-  }, [navigate]);
+  // useEffect(() => {
+  //   const storedUserId = sessionStorage.getItem("userId");
+  //   if (storedUserId) {
+  //     navigate("/dashboard");
+  //   } else {
+  //     setAuthChecked(true); 
+  //   }
+  // }, [navigate]);
 
 
  
@@ -76,11 +76,10 @@ export default function Login() {
       if (response?.status == 200) {
         const responseData = await response.json();
         setRes(responseData?.data);
-        console.log("respose", responseData?.data);
         sessionStorage.setItem("userId", responseData?.data?.adminId);
-        console.log("res", res);
-        navigate("/dashboard");
         toast.success("Login Successfully");
+
+        navigate("/dashboard");
         setLoading(false)
       } else {
         const responseData = await response.json();
