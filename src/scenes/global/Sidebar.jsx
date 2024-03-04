@@ -160,28 +160,13 @@ const Sidebar = () => {
             >
               Pages
             </Typography>
-            <SubMenu
+            <Item
               title="Add Merchant"
-              icon={<AddIcon />}
-              style={{
-                color: colors.grey[100],
-              }}
-            >
-              <Item
-                title="Single Merchant"
-                to="/form"
-                icon={<PersonAddIcon />}
-                selected={selected}
-                setSelected={setSelected}
-              />
-              <Item
-                title="Multiple Merchant"
-                to="/bulkupload"
-                icon={<FileCopyIcon />}
-                selected={selected}
-                setSelected={setSelected}
-              />
-            </SubMenu>
+              to="/form"
+              icon={<PersonAddIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
 
             <Typography
               variant="h6"
